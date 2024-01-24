@@ -1,5 +1,5 @@
 <script setup>
-import { useProductStore } from '@/stores/product'
+import { useProductStore } from '@/stores/user/product'
 
 import { onMounted,ref, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
@@ -29,6 +29,9 @@ watch(() => route.query.q, (newSearchText) => {
 const filterProducts = computed(() => {
     return productStore.filterProducts(searchText.value)
 })
+
+// const filterProducts = productStore.filterProducts(searchText.value)
+
 </script>
 
 <template>
@@ -36,4 +39,4 @@ const filterProducts = computed(() => {
         <div class="text-xl font-bold m-4">Search: {{ searchText}}</div>
         <Product :productList = 'filterProducts'/>
     </UserLayout>
-</template>
+</template>@/stores/user/product

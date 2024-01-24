@@ -1,6 +1,6 @@
 <script setup>
 // Store
-import { useProductStore } from '@/stores/product'
+import { useProductStore } from '@/stores/user/product'
 
 // Layout
 import UserLayout from '@/layouts/UserLayout.vue'
@@ -31,3 +31,4 @@ const productStore = useProductStore()
 
   </UserLayout>
 </template>
+@/stores/user/product
