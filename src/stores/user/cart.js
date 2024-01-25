@@ -7,8 +7,19 @@ export const useCartStore = defineStore("cart", {
   }),
   actions: {
     addToCart(productData) {
-      this.items.push(productData);
-      this.saveToStorage();
+      // find index if not found in items[] reuturn -1 if found item return current index
+      const findProductIndex = this.items.findIndex(item => {
+        return item.name === productData.name
+      })
+      
+      if (findProductIndex < 0) { // if findProductIndex < 0 (if not found item in items[])
+        productData.quantity = 1 // add quantity = 1
+        this.items.push(productData); //push productData to items
+        this.saveToStorage(); // invoke saveToStorage
+      } else { // if found current item match with 0, 1, 2, ... not < 0
+        const currentItem = this.items[findProductIndex] //pick current item with findProductIndex
+        this.updateQuantity(findProductIndex, currentItem.quantity + 1) //invoke updateQuantity
+      }
     },
     updateQuantity(index, quantity) {
       this.items[index].quantity = quantity;
@@ -23,10 +34,12 @@ export const useCartStore = defineStore("cart", {
     saveToStorage() {
       localStorage.setItem("productData", JSON.stringify(this.items));
     },
-    loadFromStorage() {
-      const getItem = localStorage.getItem("productData");
-      const cartItems = JSON.parse(getItem);
-      this.items = cartItems;
+    loadCartFromStorage() {
+      if (localStorage.getItem("productData")) {
+        const getItem = localStorage.getItem("productData");
+        const cartItems = JSON.parse(getItem);
+        this.items = cartItems;
+      }
     },
   },
   getters: {

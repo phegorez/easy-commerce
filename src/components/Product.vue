@@ -1,16 +1,9 @@
 <script setup>
-import { defineProps, onMounted, ref } from "vue";
-
-import { useCartStore } from "@/stores/user/cart";
-
-const cartStore = useCartStore();
-
-const addToCart = (product) => {
-  cartStore.addToCart(product);
-};
+import { defineProps } from "vue";
 
 defineProps({
   productList: Array,
+  addToCart: Function
 });
 </script>
 
@@ -26,9 +19,12 @@ defineProps({
       <div class="card-body">
         <h2 class="card-title">{{ product.name }}</h2>
         <p>{{ product.about }}?</p>
-        <div class="card-actions justify-end">
+        <div class="flex gap-4 flex-col">
           <button class="btn btn-primary" @click="addToCart(product)">
             Buy Now
+          </button>
+          <button class="btn btn-primary" @click="addToCart(product, 'fromAddTocart')">
+            Add to Cart
           </button>
         </div>
       </div>

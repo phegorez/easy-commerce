@@ -4,7 +4,9 @@ import Close from "@/components/icons/Close.vue";
 import CartXmark from "@/components/icons/CartXmark.vue";
 
 import { useCartStore } from "@/stores/user/cart";
-import { onMounted } from "vue";
+
+import { RouterLink } from "vue-router";
+
 
 const cartStore = useCartStore();
 
@@ -42,20 +44,13 @@ const changeQuantity = (event, index) => {
                   <div>{{ item.price }} ฿</div>
                 </div>
                 <div>
-                  <select
-                    @change="changeQuantity($event, index)"
-                    class="select w-3/4"
-                    v-model="item.quantity"
-                  >
-                    <option v-for="quantity in [1, 2, 3, 4, 5]">
+                  <select @change="changeQuantity($event, index)" class="select w-3/4" v-model="item.quantity">
+                    <option v-for="quantity in item.stock">
                       {{ quantity }}
                     </option>
                   </select>
                 </div>
-                <div
-                  @click="cartStore.removeItemIncart(index)"
-                  class="absolute top-0 right-0 cursor-pointer"
-                >
+                <div @click="cartStore.removeItemIncart(index)" class="absolute top-0 right-0 cursor-pointer">
                   <Close />
                 </div>
               </div>
@@ -84,6 +79,9 @@ const changeQuantity = (event, index) => {
             <div>{{ cartStore.summaryTotalPrice }}</div>
           </div>
         </div>
+        <RouterLink :to="{name: 'checkout'}">
+          <button class="btn btn-neutral w-full font-bold text-lg mt-4">Checkout</button>
+        </RouterLink>
       </div>
     </div>
   </UserLayout>

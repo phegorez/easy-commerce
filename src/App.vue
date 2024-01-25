@@ -7,7 +7,7 @@ import { useCartStore } from "@/stores/user/cart";
 const cartStore = useCartStore();
 
 onMounted(() => {
-  cartStore.loadFromStorage();
+  cartStore.loadCartFromStorage();
 });
 </script>
 
