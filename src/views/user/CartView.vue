@@ -45,6 +45,7 @@ const changeQuantity = (event, index) => {
                   <select
                     @change="changeQuantity($event, index)"
                     class="select w-3/4"
+                    v-model="item.quantity"
                   >
                     <option v-for="quantity in [1, 2, 3, 4, 5]">
                       {{ quantity }}
