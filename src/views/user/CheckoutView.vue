@@ -1,6 +1,12 @@
 <script setup>
+
+import { useCartStore } from '@/stores/user/cart';
 import UserLayout from '@/layouts/UserLayout.vue'
+
+import { RouterLink } from 'vue-router';
 import { reactive } from 'vue';
+
+const cartStore = useCartStore();
 
 const FormData = [
     {
@@ -35,6 +41,7 @@ const payment = () => {
 
 <template>
     <UserLayout>
+        <h1 class="text-3xl font-bold m-4">Checkout</h1>
         <div class="flex">
             <section class="flex-auto w-64 bg-base-200 p-8">
                 <label class="form-control w-full" v-for="formInput in FormData">
@@ -57,7 +64,40 @@ const payment = () => {
             </section>
 
             <section class="flex-auto w-32 bg-base-300">
-                Summary
+                <div v-for="item in cartStore.items" class="flex bg-neutral-content m-8 py-4">
+                    <div class="flex-1">
+                        <img class="w-full p-6" :src="item.imageUrl">
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex flex-col justify-between h-full p-4">
+                            <div>
+                                <div class="font-bold">{{ item.name }}</div>
+                                <div>Quantity : {{ item.quantity }}</div>
+                            </div>
+                            <RouterLink :to="{ name: 'cart' }" class="btn btn-neutral btn-sm">Edit</RouterLink>
+                        </div>
+                    </div>
+                </div>
+                <div class="divider px-2 mx-auto divider-neutral"></div>
+                <div class="px-6">
+                    <div class="font-bold mb-4">Order Summary</div>
+                    <div class="flex justify-between">
+                        <div>Price</div>
+                        <div>{{ cartStore.summaryPrice }}</div>
+                    </div>
+                    <div class="flex justify-between">
+                        <div>Shipping cost</div>
+                        <div>{{ cartStore.shippingCost }}</div>
+                    </div>
+                </div>
+                <div class="divider px-2 mx-auto divider-neutral"></div>
+                <div class="px-6 mb-4">
+                    <div class="flex justify-between">
+                        <div>Total Price</div>
+                        <div>{{ cartStore.summaryTotalPrice }}</div>
+                    </div>
+                </div>
+
             </section>
         </div>
     </UserLayout>

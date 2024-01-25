@@ -44,7 +44,7 @@ const changeQuantity = (event, index) => {
                   <div>{{ item.price }} ฿</div>
                 </div>
                 <div>
-                  <select @change="changeQuantity($event, index)" class="select w-3/4" v-model="item.quantity">
+                  <select @change="changeQuantity($event, index)" class="select w-10/12" v-model="item.quantity">
                     <option v-for="quantity in item.stock">
                       {{ quantity }}
                     </option>
@@ -71,7 +71,7 @@ const changeQuantity = (event, index) => {
           <div class="divider divider-neutral"></div>
           <div class="flex justify-between">
             <div>Delivered Price</div>
-            <div>{{ cartStore.deliveredCost }}</div>
+            <div>{{ cartStore.shippingCost }}</div>
           </div>
           <div class="divider divider-neutral"></div>
           <div class="flex justify-between">

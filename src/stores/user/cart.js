@@ -3,7 +3,7 @@ import { defineStore } from "pinia";
 export const useCartStore = defineStore("cart", {
   state: () => ({
     items: [],
-    deliveredCost: 50,
+    shippingCost: 50,
   }),
   actions: {
     addToCart(productData) {
@@ -54,7 +54,7 @@ export const useCartStore = defineStore("cart", {
       }, 0);
     },
     summaryTotalPrice() {
-      return this.summaryPrice + this.deliveredCost;
+      return this.summaryPrice + this.shippingCost;
     },
   },
 });
