@@ -4,6 +4,7 @@ export const useCartStore = defineStore("cart", {
   state: () => ({
     items: [],
     shippingCost: 50,
+    checkoutObj: {}
   }),
   actions: {
     addToCart(productData) {
@@ -30,6 +31,23 @@ export const useCartStore = defineStore("cart", {
       this.items.splice(index, 1);
       this.saveToStorage();
       console.log("Remove Success");
+    },
+    checkout(userData) {
+      const orderData = {
+        ...userData,
+        totalPrice: this.summaryPrice,
+        paymentMethod: 'paypal',
+        orderDate: (new Date()).toLocaleString(),
+        orderID: `SS${Math.floor(Math.random() * 90000 + 10000)}`,
+        product: this.items
+      }
+      localStorage.setItem('order-data', JSON.stringify(orderData))
+    },
+    loadCheckout() {
+      const orderData = localStorage.getItem("order-data")
+        if(orderData) {
+          this.checkoutObj = JSON.parse(orderData)
+        }
     },
     saveToStorage() {
       localStorage.setItem("productData", JSON.stringify(this.items));

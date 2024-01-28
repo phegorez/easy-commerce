@@ -24,6 +24,9 @@ const login = () => {
 const logout = () => {
     isLoggedIn.value = false
     localStorage.removeItem('isLoggedIn')
+    localStorage.removeItem('productData')
+    localStorage.removeItem('order-data')
+    window.location.reload()
 }
 
 const handleSearch = (event) => {
@@ -36,6 +39,7 @@ const handleSearch = (event) => {
         })
     }
 }
+
 </script>
 
 <template>
