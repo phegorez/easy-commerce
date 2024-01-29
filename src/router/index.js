@@ -1,45 +1,57 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '@/views/user/HomeView.vue'
-import SearchView from '@/views/user/SearchView.vue'
-import ProfileView from '@/views/user/ProfileView.vue'
-import CartView from '@/views/user/CartView.vue'
-import SuccessView from '@/views/user/SuccessView.vue'
-import CheckoutView from '@/views/user/CheckoutView.vue'
+import { createRouter, createWebHistory } from "vue-router";
+import HomeView from "@/views/user/HomeView.vue";
+import SearchView from "@/views/user/SearchView.vue";
+import ProfileView from "@/views/user/ProfileView.vue";
+import CartView from "@/views/user/CartView.vue";
+import SuccessView from "@/views/user/SuccessView.vue";
+import CheckoutView from "@/views/user/CheckoutView.vue";
+import LogoutView from "@/views/user/LogoutView.vue";
+import Notfound from "@/views/user/NotfoundView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
-      name: 'home',
-      component: HomeView
+      path: "/",
+      name: "home",
+      component: HomeView,
     },
     {
-      path: '/search',
-      name: 'search',
-      component: SearchView
+      path: "/search",
+      name: "search",
+      component: SearchView,
     },
     {
-      path: '/profile',
-      name: 'profile',
-      component: ProfileView
+      path: "/profile",
+      name: "profile",
+      component: ProfileView,
     },
     {
-      path: '/cart',
-      name: 'cart',
-      component: CartView
+      path: "/cart",
+      name: "cart",
+      component: CartView,
     },
     {
-      path: '/checkout',
-      name: 'checkout',
-      component: CheckoutView
+      path: "/checkout",
+      name: "checkout",
+      component: CheckoutView,
     },
     {
-      path: '/success',
-      name: 'success',
-      component: SuccessView
-    }
-  ]
-})
+      path: "/success/:cartid",
+      name: "success",
+      component: SuccessView,
+    },
+    {
+      path: "/logout",
+      name: "logout",
+      component: LogoutView,
+    },
+    {
+      path: "/:pathMatch(.*)*",
+      name: "notfound",
+      component: Notfound,
+    },
+  ],
+});
 
-export default router
+export default router;

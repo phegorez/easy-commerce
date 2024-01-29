@@ -4,22 +4,25 @@ export const useCartStore = defineStore("cart", {
   state: () => ({
     items: [],
     shippingCost: 50,
-    checkoutObj: {}
+    checkoutObj: {},
+    cartID: "",
   }),
   actions: {
     addToCart(productData) {
       // find index if not found in items[] reuturn -1 if found item return current index
-      const findProductIndex = this.items.findIndex(item => {
-        return item.name === productData.name
-      })
-      
-      if (findProductIndex < 0) { // if findProductIndex < 0 (if not found item in items[])
-        productData.quantity = 1 // add quantity = 1
+      const findProductIndex = this.items.findIndex((item) => {
+        return item.name === productData.name;
+      });
+
+      if (findProductIndex < 0) {
+        // if findProductIndex < 0 (if not found item in items[])
+        productData.quantity = 1; // add quantity = 1
         this.items.push(productData); //push productData to items
         this.saveToStorage(); // invoke saveToStorage
-      } else { // if found current item match with 0, 1, 2, ... not < 0
-        const currentItem = this.items[findProductIndex] //pick current item with findProductIndex
-        this.updateQuantity(findProductIndex, currentItem.quantity + 1) //invoke updateQuantity
+      } else {
+        // if found current item match with 0, 1, 2, ... not < 0
+        const currentItem = this.items[findProductIndex]; //pick current item with findProductIndex
+        this.updateQuantity(findProductIndex, currentItem.quantity + 1); //invoke updateQuantity
       }
     },
     updateQuantity(index, quantity) {
@@ -36,18 +39,19 @@ export const useCartStore = defineStore("cart", {
       const orderData = {
         ...userData,
         totalPrice: this.summaryPrice,
-        paymentMethod: 'paypal',
-        orderDate: (new Date()).toLocaleString(),
+        paymentMethod: "paypal",
+        orderDate: new Date().toLocaleString(),
         orderID: `SS${Math.floor(Math.random() * 90000 + 10000)}`,
-        product: this.items
-      }
-      localStorage.setItem('order-data', JSON.stringify(orderData))
+        product: this.items,
+      };
+      this.cartID = orderData.orderID;
+      localStorage.setItem("order-data", JSON.stringify(orderData));
     },
     loadCheckout() {
-      const orderData = localStorage.getItem("order-data")
-        if(orderData) {
-          this.checkoutObj = JSON.parse(orderData)
-        }
+      const orderData = localStorage.getItem("order-data");
+      if (orderData) {
+        this.checkoutObj = JSON.parse(orderData);
+      }
     },
     saveToStorage() {
       localStorage.setItem("productData", JSON.stringify(this.items));
