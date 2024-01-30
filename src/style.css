@@ -3,5 +3,9 @@
 @tailwind utilities;
 
 .hero {
-    @apply w-auto
+  @apply w-auto;
+}
+
+.inputFile {
+  @apply mt-4 file:bg-neutral file:cursor-pointer file:border-none file:p-2 file:text-white file:mr-4;
 }
