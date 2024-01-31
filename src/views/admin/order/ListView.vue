@@ -1,5 +1,9 @@
+<script setup>
+import AdminLayout from '@/layouts/AdminLayout.vue'
+</script>
+
 <template>
-    <div>
-        List
-    </div>
+    <AdminLayout>
+        order
+    </AdminLayout>
 </template>
