@@ -1,10 +1,8 @@
 <script setup>
-import { reactive, onMounted } from "vue";
-
-import { useRoute } from "vue-router";
+import { reactive } from "vue";
 
 import AdminLayout from "@/layouts/AdminLayout.vue";
-const route = useRoute();
+
 const FormData = [
   {
     name: "Name",
@@ -33,11 +31,6 @@ const productFormData = reactive({
   name: "",
   address: "",
   note: "",
-});
-
-onMounted(() => {
-  const word = "product";
-  console.log(route.name);
 });
 </script>
 
