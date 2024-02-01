@@ -2,39 +2,46 @@ import { defineStore } from "pinia";
 
 export const useAdminProductStore = defineStore("product", {
     state: () => ({
-        list: [
-            {
-                name: 'test',
-                imageUrl: 'https://fastly.picsum.photos/id/161/200/200.jpg?hmac=67RAUzlqjfTvEM9tZ3K0ZMB1mAOXZZULGVHKjt1pmPs',
-                price: 200,
-                quantity: 20,
-                remainQuantity: 20,
-                status: 'open',
-                updatedAt: (new Date()).toLocaleString()
-            }
-        ]
+        list: [],
+        loaded: false
     }),
     actions: {
         getProduct(index) {
+            if(!this.loaded) {
+                this.loadProductsFromStorage
+            }
             return this.list[index]
         },
-        addProdcut(productData) {
+        addProduct(productData) {
             productData.remainQuantity = productData.quantity
             productData.updatedAt = (new Date()).toLocaleString()
             this.list.push(productData)
+            this.saveToStorage()
         },
-        updateProduct (index, productData) {
-            this.list[index].name = productData.name
-            this.list[index].imageUrl = productData.imageUrl
-            this.list[index].price = productData.price
-            this.list[index].quantity = productData.quantity
+        updateProduct(index, productData) {
+            const fields = ['name', 'imageUrl', 'price', 'quantity', 'status']
+            for(let field of fields) {
+                this.list[index][field] = productData[field]
+            }
             this.list[index].remainQuantity = productData.quantity
-            this.list[index].status = productData.status
             productData.updatedAt = (new Date()).toLocaleString()
+            this.saveToStorage()
         },
         removeProduct(index) {
             this.list.splice(index, 1)
-        }
+            this.saveToStorage()
+        },
+        saveToStorage() {
+            localStorage.setItem("Admin-Product-Data", JSON.stringify(this.list));
+        },
+        loadProductsFromStorage() {
+            const getItem = localStorage.getItem("Admin-Product-Data")
+            if (getItem) {
+                const products = getItem
+                this.list = JSON.parse(products);
+                this.loaded = true
+            }
+        },
     },
     getters: {
 
