@@ -1,5 +1,5 @@
 <script setup>
-import { useCartStore } from "@/stores/user/cart";
+import { useCartStore } from "@/stores/user/user_cart";
 
 import { RouterLink, useRouter } from "vue-router";
 import { onMounted, ref } from "vue";
@@ -100,3 +100,4 @@ onMounted(() => {
     </div>
   </UserLayout>
 </template>
+@/stores/user/user_cart

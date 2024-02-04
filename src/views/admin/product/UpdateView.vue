@@ -1,5 +1,5 @@
 <script setup>
-import { useAdminProductStore } from '@/stores/admin/product'
+import { useAdminProductStore } from '@/stores/admin/admin_product'
 
 import { reactive, onMounted, ref } from "vue";
 import { useRouter, useRoute, RouterLink } from 'vue-router';
@@ -10,7 +10,7 @@ const adminProductStore = useAdminProductStore()
 const router = useRouter()
 const route = useRoute()
 
-const proDuctID = ref(-1)
+const productID = ref(-1)
 const ID = route.params.id
 const mode = ref('Add')
 
@@ -59,21 +59,20 @@ const AddOrEditProdcut = () => {
     if (mode.value === 'Add') {
         adminProductStore.addProduct(productData)
         router.push({ name: 'admin-products-list' })
-    } else if (mode.value === 'Edit') {
-        adminProductStore.updateProduct(proDuctID.value, productData)
-        router.push({name: 'admin-products-list'})
-        // console.log(proDuctID.value, productData);
+    } else {
+        // console.log(productData);
+        adminProductStore.updateProduct(productID.value, productData)
+        router.push({ name: 'admin-products-list' })
     }
 }
 
 onMounted(() => {
     if (route.params.id) {
-        proDuctID.value = parseInt(ID)
+        productID.value = parseInt(ID)
         mode.value = 'Edit'
+        const selectedProduct = adminProductStore.getProduct(productID.value)
+        Object.assign(productData, selectedProduct)
     }
-
-    const selectedProduct = adminProductStore.getProduct(proDuctID.value)
-    Object.assign(productData, selectedProduct)
 })
 </script>
 
@@ -107,7 +106,7 @@ onMounted(() => {
                 </label>
             </div>
             <div class="mt-4 flex justify-end gap-5">
-                <RouterLink :to="{name:'admin-products-list'}" class="btn btn-ghost" >Back</RouterLink>
+                <RouterLink :to="{ name: 'admin-products-list' }" class="btn btn-ghost">Back</RouterLink>
                 <button class="btn btn-neutral" @click="AddOrEditProdcut()">{{ mode }}</button>
             </div>
         </div>

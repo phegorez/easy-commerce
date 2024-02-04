@@ -1,6 +1,6 @@
 <script setup>
-import { useProductStore } from '@/stores/user/product'
-import { useCartStore } from '@/stores/user/cart'
+import { useProductStore } from '@/stores/user/user_product'
+import { useCartStore } from '@/stores/user/user_cart'
 
 import { ref, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -50,4 +50,4 @@ const filterProducts = computed(() => {
         <div class="text-xl font-bold m-4">Search: {{ searchText }}</div>
         <Product :productList='filterProducts' :addToCart="addToCart" />
     </UserLayout>
-</template>@/stores/user/product
+</template>@/stores/user/product@/stores/user/user_cart@/stores/user/user_product

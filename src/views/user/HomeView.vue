@@ -1,7 +1,7 @@
 <script setup>
 // Store
-import { useProductStore } from '@/stores/user/product'
-import { useCartStore } from "@/stores/user/cart";
+import { useProductStore } from '@/stores/user/user_product'
+import { useCartStore } from "@/stores/user/user_cart";
 
 // libraly
 import { useRouter } from 'vue-router';
@@ -47,4 +47,4 @@ const addToCart = (product, isAddtoCart) => {
 
   </UserLayout>
 </template>
-@/stores/user/product
+@/stores/user/product@/stores/user/user_cart@/stores/user/user_product

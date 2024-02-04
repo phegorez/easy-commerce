@@ -3,7 +3,7 @@
 import { RouterLink } from 'vue-router'
 
 // Store
-import { useAdminUserStore } from '@/stores/admin/user'
+import { useAdminUserStore } from '@/stores/admin/admin_user'
 
 // Layout
 import AdminLayout from '@/layouts/AdminLayout.vue'
@@ -43,19 +43,23 @@ const tabelHeaders = [
             <tr v-for="(user, index) in adminUserStore.usersList" :key="index">
                 <td>{{ user.name }}</td>
                 <td>{{ user.role }}</td>
-                <td>{{ user.status }}</td>
+                <td>
+                    <div class="badge gap-2" :class="user.status === 'active' ? 'badge-success' : 'badge-error'">
+                        {{ user.status }}
+                    </div>
+                </td>
                 <td>{{ user.updatedAt }}</td>
                 <td>
                     <div class="flex gap-2">
-                        <RouterLink :to="{name: 'admin-users-update', params: {id: index}}" class="btn font-bold">
+                        <RouterLink :to="{ name: 'admin-users-update', params: { id: index } }" class="btn font-bold">
                             EDIT
                         </RouterLink>
-                        <div @click="changeStatus(index)" class="btn font-bold" :class="user.status === 'active' ? '' : 'btn-neutral'">
-                            {{user.status === 'active' ? 'DISABLE' : 'ENABLE'}}
-                        </div>
+                        <button @click="changeStatus(index)" class="btn font-bold"
+                            :class="user.status === 'active' ? '' : 'btn-neutral'">
+                            {{ user.status === 'active' ? 'DISABLE' : 'ENABLE' }}
+                        </button>
                     </div>
                 </td>
             </tr>
         </Table>
-    </AdminLayout>
-</template>
+</AdminLayout></template>@/stores/admin/admin_user

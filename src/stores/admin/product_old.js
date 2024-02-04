@@ -8,7 +8,7 @@ export const useAdminProductStore = defineStore("product", {
     actions: {
         getProduct(index) {
             if(!this.loaded) {
-                this.loadProductsFromStorage
+                this.loadProductsFromStorage()
             }
             return this.list[index]
         },

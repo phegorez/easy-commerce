@@ -1,5 +1,5 @@
 <script setup>
-import { useCartStore } from "@/stores/user/cart";
+import { useCartStore } from "@/stores/user/user_cart";
 import UserLayout from "@/layouts/UserLayout.vue";
 
 import { RouterLink, useRouter } from "vue-router";
@@ -127,3 +127,4 @@ const payment = () => {
     </div>
   </UserLayout>
 </template>
+@/stores/user/user_cart

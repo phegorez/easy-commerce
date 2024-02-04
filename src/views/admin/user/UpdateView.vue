@@ -3,7 +3,7 @@
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 
 // Store
-import { useAdminUserStore } from '@/stores/admin/user'
+import { useAdminUserStore } from '@/stores/admin/admin_user'
 
 // Layout
 import AdminLayout from '@/layouts/AdminLayout.vue'
@@ -97,4 +97,4 @@ onMounted(() => {
                 <button class="btn btn-neutral" @click="updateUser()">Update</button>
             </div>
         </div>
-    </AdminLayout></template>
+    </AdminLayout></template>@/stores/admin/admin_user

@@ -3,7 +3,7 @@
 import { RouterLink } from 'vue-router'
 
 //Store
-import { useAdminProductStore } from '@/stores/admin/product'
+import { useAdminProductStore } from '@/stores/admin/admin_product'
 
 // Layout
 import AdminLayout from '@/layouts/AdminLayout.vue'

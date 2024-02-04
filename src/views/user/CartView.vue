@@ -3,10 +3,11 @@ import UserLayout from "@/layouts/UserLayout.vue";
 import Close from "@/components/icons/Close.vue";
 import CartXmark from "@/components/icons/CartXmark.vue";
 
-import { useCartStore } from "@/stores/user/cart";
+import { useCartStore } from "@/stores/user/user_cart";
 
 import { RouterLink } from "vue-router";
 
+import { onMounted } from "vue";
 
 const cartStore = useCartStore();
 
@@ -15,6 +16,10 @@ const changeQuantity = (event, index) => {
   const newQuantity = parseInt(event.target.value);
   cartStore.updateQuantity(index, newQuantity);
 };
+
+onMounted(() => {
+  console.log(cartStore.items);
+})
 </script>
 
 <template>
@@ -45,8 +50,8 @@ const changeQuantity = (event, index) => {
                 </div>
                 <div>
                   <select @change="changeQuantity($event, index)" class="select w-10/12" v-model="item.quantity">
-                    <option v-for="quantity in item.stock">
-                      {{ quantity }}
+                    <option v-for="quantity in item.remainQuantity">
+                      {{ parseInt(quantity) }}
                     </option>
                   </select>
                 </div>
@@ -86,3 +91,4 @@ const changeQuantity = (event, index) => {
     </div>
   </UserLayout>
 </template>
+@/stores/user/user_cart

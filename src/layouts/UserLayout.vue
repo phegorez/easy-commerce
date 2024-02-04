@@ -1,7 +1,7 @@
 <script setup>
 import { RouterLink, useRouter } from "vue-router";
 import { ref, onMounted } from "vue";
-import { useCartStore } from "@/stores/user/cart";
+import { useCartStore } from "@/stores/user/user_cart";
 
 const cartStore = useCartStore();
 
@@ -160,3 +160,4 @@ const handleSearch = (event) => {
     </footer>
   </div>
 </template>
+@/stores/user/user_cart
