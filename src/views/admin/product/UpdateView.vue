@@ -18,8 +18,7 @@ const eventStore = useEventStore();
 const router = useRouter();
 const route = useRoute();
 
-const productID = ref(-1);
-const ID = route.params.id;
+const productID = route.params.id;
 const mode = ref("Add");
 const selectedProduct = ref({});
 
@@ -62,7 +61,7 @@ const AddOrEditProdcut = () => {
     eventStore.popupMessage("success", "Add product successful");
   } else {
     console.log(productData);
-    adminProductStore.updateProduct(productID.value, productData);
+    adminProductStore.updateProduct(productID, productData);
     router.push({ name: "admin-products-list" });
     eventStore.popupMessage("success", "edit product successful");
   }
@@ -70,10 +69,9 @@ const AddOrEditProdcut = () => {
 
 onMounted(() => {
   if (route.params.id) {
-    productID.value = parseInt(ID);
     mode.value = "Edit";
-    selectedProduct.value = adminProductStore.getProduct(productID.value);
-    Object.assign(productData, selectedProduct.value);
+    adminProductStore.getProductsbyID(productID);
+    Object.assign(productData, adminProductStore.selectedProduct);
   }
 });
 </script>

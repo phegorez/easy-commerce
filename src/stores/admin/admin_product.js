@@ -6,54 +6,87 @@ const API_URL = import.meta.env.VITE_API_URL;
 export const useAdminProductStore = defineStore("admin-product", {
   state: () => ({
     list: [],
-    loaded: false,
+    selectedProduct: {},
   }),
   actions: {
-    getProduct(index) {
-      if (!this.loaded) {
-        this.loadProductsFromStorage();
+    async getProduct() {
+      try {
+        const response = await axios.get(`${API_URL}/products`);
+        const data = response.data;
+        this.list = data;
+      } catch (err) {
+        console.log("Error loading product", err);
       }
-      return this.list[index];
     },
-    addProduct(productData) {
-      productData.remainQuantity = productData.quantity;
-      //   productData.updatedAt = new Date().toLocaleString();
-      this.list.push(productData);
-      this.saveToStorage();
-    },
-    updateProduct(index, productData) {
-      console.log(productData);
-      const fields = [
-        "name",
-        "imageUrl",
-        "price",
-        "quantity",
-        "about",
-        "status",
-      ];
-      for (let field of fields) {
-        this.list[index][field] = productData[field];
+    async getProductsbyID(productId) {
+      try {
+        const response = await axios.get(`${API_URL}/products/${productId}`);
+        const data = response.data;
+        this.selectedProduct = data;
+      } catch (err) {
+        console.log("Error loading product", err);
       }
-      this.list[index].remainQuantity = productData.quantity;
-      this.list[index] = new Date().toLocaleString();
-      console.log(this.list[index]);
-      this.saveToStorage();
     },
-    removeProduct(index) {
-      this.list.splice(index, 1);
-      this.saveToStorage();
+    async addProduct(productData) {
+      const newProduct = {
+        name: productData.name,
+        imageUrl: productData.imageUrl,
+        price: parseInt(productData.price),
+        quantity: parseInt(productData.quantity),
+        remainQuantity: parseInt(productData.quantity),
+        about: productData.about,
+        status: productData.status,
+        updatedAt: new Date().toLocaleString(),
+      };
+      //post
+      try {
+        const response = await axios.post(`${API_URL}/products`, newProduct);
+        const data = response.data;
+        this.list.push(data);
+      } catch (err) {
+        console.log("Error loading product", err);
+      }
+      // productData.remainQuantity = productData.quantity;
+      // productData.updatedAt = new Date().toLocaleString();
+      // this.list.push(productData);
+      // this.saveToStorage();
     },
-    saveToStorage() {
-      console.log(this.list);
-      localStorage.setItem("Admin-Product-Data", JSON.stringify(this.list));
+    async updateProduct(productID, productData) {
+      console.log(productID, productData);
+      // try {
+      //   const response = await axios.put(
+      //     `${API_URL}/products/${productID}`,
+      //     productData,
+      //   );
+      //   const data = response.data;
+      //   this.selectedProduct = data;
+      // } catch (err) {
+      //   console.log("Error loading product", err);
+      // }
+      // console.log(productData);
+      // const fields = [
+      //   "name",
+      //   "imageUrl",
+      //   "price",
+      //   "quantity",
+      //   "about",
+      //   "status",
+      // ];
+      // for (let field of fields) {
+      //   this.list[index][field] = productData[field];
+      // }
+      // this.list[index].remainQuantity = productData.quantity;
+      // this.list[index] = new Date().toLocaleString();
+      // console.log(this.list[index]);
     },
-
-    loadProductsFromStorage() {
-      const getItem = localStorage.getItem("Admin-Product-Data");
-      if (getItem) {
-        const products = getItem;
-        this.list = JSON.parse(products);
-        this.loaded = true;
+    async removeProduct(productId) {
+      console.log(productId);
+      try {
+        const response = await axios.delete(`${API_URL}/products/${productId}`);
+        const data = response.data;
+        this.list = data;
+      } catch (err) {
+        console.log("Error loading product", err);
       }
     },
   },
