@@ -57,11 +57,11 @@ const productData = ref({
 
 const AddOrEditProdcut = () => {
     if (mode.value === 'Add') {
-        adminProductStore.addProduct(productData)
+        adminProductStore.addProduct(productData.value)
         router.push({ name: 'admin-products-list' })
     } else {
         // console.log(productData);
-        adminProductStore.updateProduct(productID.value, productData)
+        adminProductStore.updateProduct(productID.value, productData.value)
         router.push({ name: 'admin-products-list' })
     }
 }
@@ -71,7 +71,7 @@ onMounted(() => {
         productID.value = parseInt(ID)
         mode.value = 'Edit'
         const selectedProduct = adminProductStore.getProduct(productID.value)
-        Object.assign(productData, selectedProduct)
+        Object.assign(productData.value, selectedProduct)
     }
 })
 </script>

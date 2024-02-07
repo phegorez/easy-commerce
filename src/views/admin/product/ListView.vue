@@ -77,12 +77,12 @@ onMounted(() => {
           <div class="flex gap-2">
             <div
               class="btn btn-ghost rounded-full"
-              @click="removeProduct(product.id)"
+              @click="removeProduct(index)"
             >
               <TrashIcon />
             </div>
             <RouterLink
-              :to="{ name: 'admin-product-update', params: { id: product.id } }"
+              :to="{ name: 'admin-product-update', params: { id: index } }"
               class="btn btn-ghost rounded-full"
             >
               <EditIcon />
