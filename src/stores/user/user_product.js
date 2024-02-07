@@ -1,5 +1,7 @@
-import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
+
+import { collection, getDocs } from 'firebase/firestore'; 
+import { db } from '@/firebase';
 
 export const useProductStore = defineStore('product', {
   state: () => ({
@@ -9,11 +11,11 @@ export const useProductStore = defineStore('product', {
     filterProducts(searchText) {
       return this.list.filter(product => product.name.includes(searchText))
     },
-    loadProductsFromStorage() {
-      const getItem = localStorage.getItem("Admin-Product-Data")
-      if (getItem) {
-          const products = getItem
-          this.list = JSON.parse(products);
+    async loadProductsFromStorage() {
+      const getItemSnapshot = await getDocs(collection(db, 'products'));
+      const products = getItemSnapshot.docs.map(doc => doc.data())
+      if (products.length > 0) {
+          this.list = products
           this.loaded = true
       }
   },
