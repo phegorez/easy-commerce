@@ -19,7 +19,7 @@ onMounted(() => {
 <template>
   <div class="toast" v-if="eventStore.alert">
     <div class="alert" :class="`alert-${eventStore.data.status}`">
-      <span>{{ eventStore.data.message }}</span>
+      <span class="font-bold text-white">{{ eventStore.data.message }}</span>
     </div>
   </div>
   <RouterView />

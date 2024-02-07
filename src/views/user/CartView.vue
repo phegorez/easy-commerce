@@ -17,9 +17,6 @@ const changeQuantity = (event, index) => {
   cartStore.updateQuantity(index, newQuantity);
 };
 
-onMounted(() => {
-  console.log(cartStore.items);
-})
 </script>
 
 <template>
@@ -59,7 +56,7 @@ onMounted(() => {
                   <Close />
                 </div>
               </div>
-              <div class="font-bold">Instock</div>
+              <div class="font-bold">Instock {{ item.remainQuantity - item.quantity }}</div>
             </div>
           </div>
         </div>

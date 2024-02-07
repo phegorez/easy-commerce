@@ -4,6 +4,7 @@ import { RouterLink } from 'vue-router'
 
 // Store
 import { useAdminUserStore } from '@/stores/admin/admin_user'
+import { useEventStore } from '@/stores/event'
 
 // Layout
 import AdminLayout from '@/layouts/AdminLayout.vue'
@@ -20,11 +21,13 @@ import EditIcon from '@/components/icons/Edit.vue'
 import { ref, onMounted } from 'vue';
 
 const adminUserStore = useAdminUserStore()
+const eventStore = useEventStore()
 
 const changeStatus = (index) => {
     const selectedUser = adminUserStore.usersList[index]
     selectedUser.status = selectedUser.status === 'active' ? 'inactive' : 'active'
     adminUserStore.updateUser(index, selectedUser)
+    eventStore.popupMessage('success', `User ${selectedUser.name} has been ${selectedUser.status}.`)
 }
 
 const tabelHeaders = [

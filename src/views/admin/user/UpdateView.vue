@@ -27,6 +27,7 @@ const router = useRouter();
 
 const userID = ref(-1);
 const ID = route.params.id;
+let selectedUser = ref({})
 
 const FormData = [
   {
@@ -57,7 +58,7 @@ const userData = reactive({
 const updateUser = (index) => {
   adminUserStore.updateUser(userID.value, userData);
   router.push({ name: "admin-users-list" });
-  eventStore.popupMessage("success", "Update user successful");
+  eventStore.popupMessage("success", `User ${selectedUser.name} has been updated`);
 };
 
 onMounted(() => {
@@ -65,7 +66,7 @@ onMounted(() => {
     userID.value = parseInt(ID);
   }
 
-  const selectedUser = adminUserStore.getUser(userID.value);
+  selectedUser = adminUserStore.getUser(userID.value);
   Object.assign(userData, selectedUser);
 });
 </script>

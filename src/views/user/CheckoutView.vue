@@ -1,12 +1,20 @@
 <script setup>
+// Store
 import { useCartStore } from "@/stores/user/user_cart";
+import { useEventStore } from "@/stores/event";
+
+// Layout
 import UserLayout from "@/layouts/UserLayout.vue";
 
+// Library
 import { RouterLink, useRouter } from "vue-router";
+
+// Vue command
 import { reactive } from "vue";
 
 const cartStore = useCartStore();
 const router = useRouter();
+const eventStore = useEventStore()
 
 const FormData = [
   {
@@ -47,6 +55,7 @@ const payment = () => {
       name: "success",
       params: { cartid: cartStore.cartID },
     });
+    eventStore.popupMessage('success', 'Your payment has been successfully');
   }
 };
 </script>

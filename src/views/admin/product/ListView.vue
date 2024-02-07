@@ -4,6 +4,7 @@ import { RouterLink } from "vue-router";
 
 //Store
 import { useAdminProductStore } from "@/stores/admin/admin_product";
+import { useEventStore } from "@/stores/event";
 
 // Layout
 import AdminLayout from "@/layouts/AdminLayout.vue";
@@ -20,9 +21,11 @@ import EditIcon from "@/components/icons/Edit.vue";
 import { ref, onMounted } from "vue";
 
 const adminProductStore = useAdminProductStore();
+const eventStore = useEventStore();
 
 const removeProduct = (id) => {
   adminProductStore.removeProduct(id);
+  eventStore.popupMessage('warning', 'Product has been removed')
 };
 
 const tabelHeaders = [

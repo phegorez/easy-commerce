@@ -27,22 +27,27 @@ const FormData = [
     {
         name: "Name",
         field: "name",
+        type: 'text',
     },
     {
         name: "Image",
         field: "imageUrl",
+        type: 'text',
     },
     {
         name: "Price",
         field: "price",
+        type: 'number',
     },
     {
         name: "Quantity",
         field: "quantity",
+        type: 'number',
     },
     {
         name: "About",
         field: "about",
+        type: 'text',
     },
 ];
 
@@ -59,10 +64,12 @@ const AddOrEditProdcut = () => {
     if (mode.value === 'Add') {
         adminProductStore.addProduct(productData.value)
         router.push({ name: 'admin-products-list' })
+        eventStore.popupMessage('success', 'Prodcut has been added')
     } else {
         // console.log(productData);
         adminProductStore.updateProduct(productID.value, productData.value)
         router.push({ name: 'admin-products-list' })
+        eventStore.popupMessage('success', 'Prodcut has been update')
     }
 }
 
@@ -87,8 +94,8 @@ onMounted(() => {
                         <div class="label">
                             <span class="label-text">{{ formInput.name }}</span>
                         </div>
-                        <input type="text" placeholder="Type here" v-model="productData[formInput.field]"
-                            class="input input-bordered w-full" />
+                        <input :type="formInput.type" placeholder="Type here"
+                            v-model="productData[formInput.field]" class="input input-bordered w-full" />
                     </label>
                 </div>
             </div>

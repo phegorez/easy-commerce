@@ -2,6 +2,7 @@
 // Store
 import { useProductStore } from '@/stores/user/user_product'
 import { useCartStore } from "@/stores/user/user_cart";
+import { useEventStore } from '@/stores/event';
 
 // libraly
 import { useRouter } from 'vue-router';
@@ -14,15 +15,18 @@ import Product from '@/components/Product.vue'
 
 const productStore = useProductStore()
 const cartStore = useCartStore();
+const eventStore = useEventStore();
 
 const router = useRouter()
 
 const addToCart = (product, isAddtoCart) => {
   if (isAddtoCart === 'fromAddTocart') {
     cartStore.addToCart(product);
+    eventStore.popupMessage('success', `Add ${product.name} to cart ${cartStore.summaryQuantity} items`)
   } else {
     cartStore.addToCart(product);
     router.push({ name: 'cart' })
+    eventStore.popupMessage('success', `Add ${product.name} to cart ${cartStore.summaryQuantity} items`)
   }
 };
 </script>
