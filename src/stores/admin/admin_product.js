@@ -25,7 +25,7 @@ export const useAdminProductStore = defineStore("admin-product", {
                 this.list[index][field] = productData[field]
             }
             this.list[index].remainQuantity = productData.quantity
-            this.list[index] = (new Date()).toLocaleString()
+            this.list[index].updatedAt = (new Date()).toLocaleString()
             this.saveToStorage()
         },
         removeProduct(index) {
