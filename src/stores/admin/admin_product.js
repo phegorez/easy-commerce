@@ -1,4 +1,7 @@
 import { defineStore } from "pinia";
+import axios from "axios";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 export const useAdminProductStore = defineStore("admin-product", {
     state: () => ({
@@ -25,7 +28,7 @@ export const useAdminProductStore = defineStore("admin-product", {
                 this.list[index][field] = productData[field]
             }
             this.list[index].remainQuantity = productData.quantity
-            this.list[index].updatedAt = (new Date()).toLocaleString()
+            this.list[index] = (new Date()).toLocaleString()
             this.saveToStorage()
         },
         removeProduct(index) {
