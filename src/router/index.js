@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+import { useAccountStore } from '@/stores/account'
 // User
 import HomeView from "@/views/user/HomeView.vue";
 import SearchView from "@/views/user/SearchView.vue";
@@ -19,7 +20,7 @@ import AdminUserList from "@/views/admin/user/ListView.vue";
 import AdminUserUpdate from "@/views/admin/user/UpdateView.vue";
 
 // Hybrid
-import LoginView from "@/views/LoginView.vue";
+import LoginView from "@/views/admin/LoginView.vue";
 import LogoutView from "@/views/user/LogoutView.vue";
 import Notfound from "@/views/user/NotfoundView.vue";
 
@@ -110,10 +111,22 @@ const router = createRouter({
     },
     {
       path: '/admin/login',
-      name: 'admin-login',
+      name: 'login',
       component: LoginView
     }
   ],
 });
+
+router.beforeEach(async (to, from, next) => {
+  const accountStore = useAccountStore()
+  await accountStore.checkAuth()
+  if (to.name.includes('admin') && !accountStore.isAdmin) {
+    next({ name: 'home' })
+  } else if (to.name === 'login' && accountStore.isAdmin) {
+    next({ name: 'dashboard' })
+  } else {
+    next()
+  }
+})
 
 export default router;

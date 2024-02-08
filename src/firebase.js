@@ -1,6 +1,8 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app';
 import { getFirestore, connectFirestoreEmulator  } from 'firebase/firestore';
+import { getAuth, connectAuthEmulator  } from "firebase/auth";
+
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -19,8 +21,16 @@ const app = initializeApp(firebaseConfig);
 
 // Initialize Cloud Firestore and get a reference to the service
 const db = getFirestore(app);
+const auth = getAuth(app);
+
 connectFirestoreEmulator(db, '127.0.0.1', 8080);
+connectAuthEmulator(auth, "http://127.0.0.1:9099");
 
 export {
-    db
+    db,
+    auth
 }
+
+
+// cli for run emulators
+// firebase emulators:start --import 'YOUR EXPORT FLODER'

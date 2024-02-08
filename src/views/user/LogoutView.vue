@@ -8,7 +8,7 @@ import Check from "@/components/icons/Check.vue";
 
 const cartStore = useCartStore();
 const router = useRouter();
-let delay = ref(5)
+let delay = ref(3)
 
 
 const startDelayTimer = () => {
