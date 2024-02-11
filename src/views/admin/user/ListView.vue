@@ -23,10 +23,14 @@ import { ref, onMounted } from 'vue';
 const adminUserStore = useAdminUserStore()
 const eventStore = useEventStore()
 
-const changeStatus = (index) => {
+onMounted( async () => {
+    await adminUserStore.loadUser()
+})
+
+const changeStatus = async (index, uid) => {
     const selectedUser = adminUserStore.usersList[index]
     selectedUser.status = selectedUser.status === 'active' ? 'inactive' : 'active'
-    adminUserStore.updateUser(index, selectedUser)
+    await adminUserStore.updateUser(uid, selectedUser)
     eventStore.popupMessage('success', `User ${selectedUser.name} has been ${selectedUser.status}.`)
 }
 
@@ -54,10 +58,10 @@ const tabelHeaders = [
                 <td>{{ user.updatedAt }}</td>
                 <td>
                     <div class="flex gap-2">
-                        <RouterLink :to="{ name: 'admin-users-update', params: { id: index } }" class="btn font-bold">
+                        <RouterLink :to="{ name: 'admin-users-update', params: { id: user.uid } }" class="btn font-bold">
                             EDIT
                         </RouterLink>
-                        <button @click="changeStatus(index)" class="btn font-bold"
+                        <button @click="changeStatus(index, user.uid)" class="btn font-bold"
                             :class="user.status === 'active' ? '' : 'btn-neutral'">
                             {{ user.status === 'active' ? 'DISABLE' : 'ENABLE' }}
                         </button>

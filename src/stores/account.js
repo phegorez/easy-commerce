@@ -6,7 +6,13 @@ import {
     signInWithEmailAndPassword
 } from "firebase/auth";
 
-import { auth } from '@/firebase'
+import {
+    doc,
+    getDoc,
+    setDoc
+} from 'firebase/firestore'
+
+import { auth, db } from '@/firebase'
 
 const provider = new GoogleAuthProvider();
 
@@ -16,19 +22,39 @@ export const useAccountStore = defineStore('account', {
     state: () => ({
         isLoggedIn: false,
         isAdmin: false,
-        user: {}
+        user: {},
+        profile: {}
     }),
     actions: {
         async checkAuth() {
             return new Promise((resolve) => {
-                onAuthStateChanged(auth, (user) => {
+                onAuthStateChanged(auth, async (user) => {
                     // console.log('user', user);
                     if (user) {
                         this.user = user;
-                        // workaround
-                        if(user.email === 'admin@test.com') {
+                        const docRef = doc(db, 'user', user.uid);
+                        const docSnap = await getDoc(docRef)
+
+                        if(docSnap.exists()){
+                            // no add new
+                            this.profile = docSnap.data()
+                        } else {
+                            // add new
+                            const newUser = {
+                                name : user.displayName,
+                                role : 'member',
+                                status : 'active',
+                                updatedAt : new Date()
+                            }
+                            await setDoc(docRef, newUser)
+                            this.profile = newUser
+                        }
+                        if(this.profile.role === 'admin' || this.profile.role === 'moderator') {
                             this.isAdmin = true;
                         }
+
+                        // new memeber
+
                         this.isLoggedIn = true;
                         resolve(true)
                     } else {

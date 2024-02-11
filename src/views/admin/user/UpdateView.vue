@@ -25,9 +25,8 @@ const eventStore = useEventStore();
 const route = useRoute();
 const router = useRouter();
 
-const userID = ref(-1);
-const ID = route.params.id;
 let selectedUser = ref({})
+const uid = route.params.id;
 
 const FormData = [
   {
@@ -39,7 +38,7 @@ const FormData = [
     name: "Role",
     field: "role",
     type: "select",
-    dropdownList: ["admin", "moderator", "user"],
+    dropdownList: ["admin", "moderator", "member"],
   },
   {
     name: "Status",
@@ -55,19 +54,18 @@ const userData = reactive({
   status: "",
 });
 
-const updateUser = (index) => {
-  adminUserStore.updateUser(userID.value, userData);
+const updateUser = async () => {
+  await adminUserStore.updateUser(uid, userData);
   router.push({ name: "admin-users-list" });
   eventStore.popupMessage("success", `User ${selectedUser.name} has been updated`);
 };
 
-onMounted(() => {
+onMounted(async () => {
   if (route.params.id) {
-    userID.value = parseInt(ID);
+    selectedUser = await adminUserStore.getUser(uid);
+    Object.assign(userData, selectedUser);
   }
 
-  selectedUser = adminUserStore.getUser(userID.value);
-  Object.assign(userData, selectedUser);
 });
 </script>
 
@@ -82,28 +80,16 @@ onMounted(() => {
             <div class="label">
               <span class="label-text">{{ formInput.name }}</span>
             </div>
-            <input
-              v-if="formInput.type === 'text'"
-              type="text"
-              v-model="userData[formInput.field]"
-              placeholder="Type here"
-              class="input input-bordered w-full"
-            />
-            <select
-              v-if="formInput.type === 'select'"
-              v-model="userData[formInput.field]"
-              class="select select-bordered"
-            >
+            <input v-if="formInput.type === 'text'" type="text" v-model="userData[formInput.field]"
+              placeholder="Type here" class="input input-bordered w-full" />
+            <select v-if="formInput.type === 'select'" v-model="userData[formInput.field]" class="select select-bordered">
               <option v-if="formInput.name === 'Role'" disabled selected>
                 Choose Role
               </option>
               <option v-if="formInput.name === 'Status'" disabled selected>
                 Choose Status
               </option>
-              <option
-                v-for="(dropdown, index) in formInput.dropdownList"
-                :value="dropdown"
-              >
+              <option v-for="(dropdown, index) in formInput.dropdownList" :value="dropdown">
                 {{ dropdown }}
               </option>
             </select>
@@ -111,9 +97,7 @@ onMounted(() => {
         </div>
       </div>
       <div class="mt-4 flex justify-end gap-5">
-        <RouterLink :to="{ name: 'admin-users-list' }" class="btn btn-ghost"
-          >Back</RouterLink
-        >
+        <RouterLink :to="{ name: 'admin-users-list' }" class="btn btn-ghost">Back</RouterLink>
         <button class="btn btn-neutral" @click="updateUser()">Update</button>
       </div>
     </div>

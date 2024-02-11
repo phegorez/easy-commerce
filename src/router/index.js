@@ -123,10 +123,9 @@ router.beforeEach(async (to, from, next) => {
   if (to.name.includes('admin') && !accountStore.isAdmin) {
     next({ name: 'home' })
   } else if (to.name === 'login' && accountStore.isAdmin) {
-    next({ name: 'dashboard' })
-  } else {
-    next()
+    next({ name: 'admin-dashboard' })
   }
+  next()
 })
 
 export default router;

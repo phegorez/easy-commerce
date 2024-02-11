@@ -18,8 +18,8 @@ const eventStore = useEventStore();
 const router = useRouter();
 const route = useRoute();
 
-const productID = ref(-1);
-const ID = route.params.id
+
+const productId = route.params.id
 const mode = ref("Add");
 const selectedProduct = ref({});
 
@@ -67,17 +67,16 @@ const AddOrEditProdcut = () => {
         eventStore.popupMessage('success', 'Prodcut has been added')
     } else {
         // console.log(productData);
-        adminProductStore.updateProduct(productID.value, productData.value)
+        adminProductStore.updateProduct(productId, productData.value)
         router.push({ name: 'admin-products-list' })
         eventStore.popupMessage('success', 'Prodcut has been update')
     }
 }
 
-onMounted(() => {
+onMounted( async () => {
     if (route.params.id) {
-        productID.value = parseInt(ID)
         mode.value = 'Edit'
-        const selectedProduct = adminProductStore.getProduct(productID.value)
+        const selectedProduct = await adminProductStore.getProduct(productId)
         Object.assign(productData.value, selectedProduct)
     }
 })

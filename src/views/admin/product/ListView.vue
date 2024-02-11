@@ -38,8 +38,8 @@ const tabelHeaders = [
   "",
 ];
 
-onMounted(() => {
-  adminProductStore.getProduct();
+onMounted( async () => {
+  await adminProductStore.loadProduct()
 });
 </script>
 
@@ -80,12 +80,12 @@ onMounted(() => {
           <div class="flex gap-2">
             <div
               class="btn btn-ghost rounded-full"
-              @click="removeProduct(index)"
+              @click="removeProduct(product.productId)"
             >
               <TrashIcon />
             </div>
             <RouterLink
-              :to="{ name: 'admin-product-update', params: { id: index } }"
+              :to="{ name: 'admin-product-update', params: { id: product.productId } }"
               class="btn btn-ghost rounded-full"
             >
               <EditIcon />
