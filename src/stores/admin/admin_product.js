@@ -8,19 +8,37 @@ import {
     getDoc,
     addDoc,
     setDoc,
-    deleteDoc
+    deleteDoc,
+    query,
+    where
 } from 'firebase/firestore'
 
 export const useAdminProductStore = defineStore("admin-product", {
     state: () => ({
         list: [],
-        loaded: false
+        filter: {
+            search: '',
+            status: '',
+            sort: {
+                updateAt: 'asc',
+                status: 'asc'
+            }
+        }
     }),
     actions: {
         async loadProduct() {
             try {
                 //find collection
-                const productCol = collection(db, 'products')
+                let productCol = query(collection(db, 'products'))
+
+                if (this.filter.search){
+                    // console.log('search', this.filter.search);
+                    productCol = query(productCol, where('name', '==', this.filter.search))
+                }
+
+                if (this.filter.status){
+                    productCol = query(productCol, where('status', '==', this.filter.status))
+                }
                 //create snapshot
                 const productSnapshot = await getDocs(productCol)
 
@@ -28,11 +46,10 @@ export const useAdminProductStore = defineStore("admin-product", {
                     const covertProductList = doc.data()
                     covertProductList.productId = doc.id
                     covertProductList.updatedAt = covertProductList.updatedAt.toDate().toLocaleString()
-                    // covertProductList.updatedAt = covertProductList.updatedA.toDate().toLocaleString()
                     return covertProductList
                 })
                 this.list = productList
-                // console.log(productList[0].updatedAt.toDate().toLocaleString());
+                // console.log(productList[0].updatedAt.toDate());
             } catch (err) {
                 console.log('error', err);
             }

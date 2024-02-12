@@ -33,4 +33,4 @@ export {
 
 
 // cli for run emulators
-// firebase emulators:start --import 'YOUR EXPORT FLODER'
+//  firebase emulators:start --import firebase-export-17073972194690Oh2kV --export-on-exit firebase-export-17073972194690Oh2kV
