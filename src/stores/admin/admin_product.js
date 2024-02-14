@@ -54,7 +54,7 @@ export const useAdminProductStore = defineStore("admin-product", {
                     productCol = query(productCol, where('status', '==', this.filter.status))
                 }
 
-                //store productCol referent in rawProductCol
+                //store productCol referenc in rawProductCol
                 const rawProductCol = productCol
 
                 //limit data to show 2 items
@@ -63,7 +63,7 @@ export const useAdminProductStore = defineStore("admin-product", {
                 //create snapshot
                 const productSnapshot = await getDocs(productCol)
 
-                //set referent data
+                //set referenc data
                 this.docList = productSnapshot.docs
 
                 //user getCountFromServer for get amount of items in collection
