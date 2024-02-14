@@ -66,7 +66,7 @@ export const useAdminProductStore = defineStore("admin-product", {
                 //set referenc data
                 this.docList = productSnapshot.docs
 
-                //user getCountFromServer for get amount of items in collection
+                //use getCountFromServer for get amount of items in collection
                 const allSnapshot = await getCountFromServer(rawProductCol)
 
                 //for test
