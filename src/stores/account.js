@@ -49,12 +49,13 @@ export const useAccountStore = defineStore('account', {
                             await setDoc(docRef, newUser)
                             this.profile = newUser
                         }
+
+                        // check if user is admin and moderator for provide admin permissions
                         if(this.profile.role === 'admin' || this.profile.role === 'moderator') {
                             this.isAdmin = true;
                         }
 
                         // new memeber
-
                         this.isLoggedIn = true;
                         resolve(true)
                     } else {

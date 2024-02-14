@@ -12,16 +12,19 @@ import AdminLayout from "@/layouts/AdminLayout.vue";
 // Component
 import Table from "@/components/Table.vue";
 import PageTitle from "@/components/PageTitle.vue";
+import Pagination from "@/components/Pagination.vue";
 
 // Icons
 import TrashIcon from "@/components/icons/Trash.vue";
 import EditIcon from "@/components/icons/Edit.vue";
+
 
 //Vue commands
 import { ref, onMounted } from "vue";
 
 const adminProductStore = useAdminProductStore();
 const eventStore = useEventStore();
+const currentPage = ref(1)
 
 const removeProduct = (id) => {
   adminProductStore.removeProduct(id);
@@ -33,12 +36,24 @@ const searchProduct = async () => {
 }
 
 const changeStatusFilter = async (newStatus) => {
-  // console.log('check',newStatus, adminProductStore.filter.status);
-  // if(newStatus === adminProductStore.filter.status) {
-  //   adminProductStore.filter.status = ''
-  // }
   adminProductStore.filter.status = newStatus
   await adminProductStore.loadProduct()
+}
+
+const changeUpdatedAtFilter = async (newFilter) => {
+  adminProductStore.filter.sort.updateAt = newFilter
+  await adminProductStore.loadProduct()
+}
+
+const changePage = async (newPage) => {
+  if(newPage < currentPage.value) {
+    // back to the previous page
+    await adminProductStore.loadNextProduct('previous')
+  } else if (newPage > currentPage.value) {
+    // go to the next page
+    await adminProductStore.loadNextProduct('next')
+  }
+  currentPage.value = newPage
 }
 
 const tabelHeaders = [
@@ -72,8 +87,8 @@ onMounted(async () => {
       <div class="flex-1">
         <h1>Update At</h1>
         <div class="join">
-          <button class="btn join-item">ASC</button>
-          <button class="btn join-item">DESC</button>
+          <button class="btn join-item" @click="changeUpdatedAtFilter('asc')" :class="adminProductStore.filter.sort.updateAt === 'asc' ? 'btn-neutral' : ''">ASC</button>
+          <button class="btn join-item" @click="changeUpdatedAtFilter('desc')" :class="adminProductStore.filter.sort.updateAt === 'desc' ? 'btn-neutral' : ''">DESC</button>
         </div>
       </div>
       <div class="flex-1">
@@ -118,5 +133,6 @@ onMounted(async () => {
         </td>
       </tr>
     </Table>
+    <Pagination :activePage="currentPage" :maxPage="adminProductStore.totalPage" :changePage="changePage"/>
   </AdminLayout>
 </template>
