@@ -88,4 +88,3 @@ const changeQuantity = (event, index) => {
     </div>
   </UserLayout>
 </template>
-@/stores/user/user_cart

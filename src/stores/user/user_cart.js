@@ -1,5 +1,13 @@
 import { defineStore } from "pinia";
 
+import { db } from '@/firebase';
+
+import {
+  updateDoc,
+  increment,
+  doc
+} from 'firebase/firestore'
+
 export const useCartStore = defineStore("cart", {
   state: () => ({
     items: [],
@@ -18,7 +26,7 @@ export const useCartStore = defineStore("cart", {
         // if findProductIndex < 0 (if not found item in items[])
         productData.quantity = 1; // add quantity = 1
         this.items.push(productData); //push productData to items
-        this.saveToStorage(); // invoke saveToStorage
+        // this.saveToStorage(); // invoke saveToStorage
       } else {
         // if found current item match with 0, 1, 2, ... not < 0
         const currentItem = this.items[findProductIndex]; //pick current item with findProductIndex
@@ -27,25 +35,37 @@ export const useCartStore = defineStore("cart", {
     },
     updateQuantity(index, quantity) {
       this.items[index].quantity = quantity;
-      this.saveToStorage();
+      // this.saveToStorage();
     },
     removeItemIncart(index) {
       this.items[index].quantity = 1;
       this.items.splice(index, 1);
-      this.saveToStorage();
+      // this.saveToStorage();
       console.log("Remove Success");
     },
-    checkout(userData) {
-      const orderData = {
-        ...userData,
-        totalPrice: this.summaryPrice,
-        paymentMethod: "paypal",
-        orderDate: new Date().toLocaleString(),
-        orderID: `SS${Math.floor(Math.random() * 90000 + 10000)}`,
-        product: this.items,
-      };
-      this.cartID = orderData.orderID;
-      localStorage.setItem("order-data", JSON.stringify(orderData));
+    async checkout(userData) {
+      try {
+        const orderData = {
+          ...userData,
+          totalPrice: this.summaryPrice,
+          paymentMethod: "paypal",
+          orderDate: new Date().toLocaleString(),
+          orderID: `SS${Math.floor(Math.random() * 90000 + 10000)}`,
+          product: this.items,
+        };
+
+        for (const product of orderData.product) {
+          const productRef = doc(db, 'products', product.productId)
+          
+          await updateDoc(productRef, {
+            remainQuantity: increment(-1)
+          })
+        }
+        // this.cartID = orderData.orderID;
+        // localStorage.setItem("order-data", JSON.stringify(orderData));
+      } catch (err) {
+        console.log('error', err);
+      }
     },
     loadCheckout() {
       const orderData = localStorage.getItem("order-data");

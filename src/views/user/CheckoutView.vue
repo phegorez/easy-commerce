@@ -50,13 +50,13 @@ const payment = () => {
   //   } else {
   //     console.error("Cart ID is not available.");
   //   }
-  if (cartStore.cartID) {
-    router.push({
-      name: "success",
-      params: { cartid: cartStore.cartID },
-    });
-    eventStore.popupMessage('success', 'Your payment has been successfully');
-  }
+  // if (cartStore.cartID) {
+  //   router.push({
+  //     name: "success",
+  //     params: { cartid: cartStore.cartID },
+  //   });
+  //   eventStore.popupMessage('success', 'Your payment has been successfully');
+  // }
 };
 </script>
 
@@ -136,4 +136,3 @@ const payment = () => {
     </div>
   </UserLayout>
 </template>
-@/stores/user/user_cart
