@@ -1,6 +1,24 @@
 <script setup>
-import { ref, onMounted } from "vue";
+// Libraly
+import { storage } from '@/firebase'
+import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage'
+
+// Store
+import { useAccountStore } from '@/stores/account'
+const accountStore = useAccountStore()
+
+// Layout
 import UserLayout from "@/layouts/UserLayout.vue";
+
+// Vue commands
+import { ref, onMounted } from "vue";
+
+
+
+//Step to upload image to Firebase
+//1. Set reference in Firebase
+//2. Upload file
+//3. Get download file
 
 const profileImageUrl = ref(
   "https://i1.sndcdn.com/artworks-000161913473-5mwrx1-t500x500.jpg",
@@ -8,36 +26,45 @@ const profileImageUrl = ref(
 const email = ref("");
 const name = ref("");
 
-const handleFileUpload = (event) => {
+const handleFileUpload = async (event) => {
   const file = event.target.files[0];
 
   if (file) {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      profileImageUrl.value = e.target.result;
-    };
-    reader.readAsDataURL(file);
+    //Set reference in Firebase
+    const uploadRef = storageRef(
+      storage,
+      `users/${accountStore.user.uid}/${file.name}`
+    )
+
+    //Upload file
+    const snapShot = await uploadBytes(uploadRef, file)
+
+    //Get download file
+    const downloadUrl = await getDownloadURL(snapShot.ref)
+    profileImageUrl.value = downloadUrl
+
   }
 };
 
-const updateProfile = () => {
-  const profileData = {
-    imageUrl: profileImageUrl.value,
-    email: email.value,
-    name: name.value,
-  };
-  localStorage.setItem("profile-data", JSON.stringify(profileData));
-  alert("Success");
+const updateProfile = async () => {
+  try {
+    const profileData = {
+      imageUrl: profileImageUrl.value,
+      email: email.value,
+      name: name.value,
+    };
+    await accountStore.updateProfile(profileData)
+  } catch (err) {
+    console.log('Failed to update profile', err);
+  }
 };
 
 onMounted(() => {
-  let profileData = localStorage.getItem("profile-data");
-  if (profileData) {
-    profileData = JSON.parse(profileData);
-    profileImageUrl.value = profileData.imageUrl;
-    name.value = profileData.name;
-    email.value = profileData.email;
-  }
+  let profileData = accountStore.profile
+  profileImageUrl.value = (profileData.imageUrl || 'https://i1.sndcdn.com/artworks-000161913473-5mwrx1-t500x500.jpg')
+  name.value = profileData.name;
+  email.value = profileData.email;
+
 });
 </script>
 
@@ -53,33 +80,20 @@ onMounted(() => {
               <img :src="profileImageUrl" />
             </div>
           </div>
-          <input
-            type="file"
-            class="inputFile border-2 border-neutral rounded-md"
-            @change="handleFileUpload"
-          />
+          <input type="file" class="inputFile border-2 border-neutral rounded-md" @change="handleFileUpload" />
         </div>
         <div class="form-control w-full">
           <label class="label">
             <span class="label-text">Email</span>
           </label>
-          <input
-            v-model="email"
-            type="text"
-            placeholder="Type here"
-            class="input input-bordered w-full"
-          />
+          <input :value="accountStore.user.email" type="text" placeholder="Type here" class="input input-bordered w-full"
+            disabled />
         </div>
         <div class="form-control w-full">
           <label class="label">
             <span class="label-text">Name</span>
           </label>
-          <input
-            v-model="name"
-            type="text"
-            placeholder="Type here"
-            class="input input-bordered w-full"
-          />
+          <input v-model="name" type="text" placeholder="Type here" class="input input-bordered w-full" />
         </div>
         <button @click="updateProfile" class="btn btn-neutral mt-4 w-full">
           Update Profile

@@ -1,6 +1,8 @@
 <script setup>
 // Libraly
 import { useRouter, useRoute, RouterLink } from "vue-router";
+import { storage } from '@/firebase'
+import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage'
 
 // Store
 import { useAdminProductStore } from "@/stores/admin/admin_product";
@@ -22,6 +24,7 @@ const route = useRoute();
 const productId = route.params.id
 const mode = ref("Add");
 const selectedProduct = ref({});
+const imgeUrl = ref('')
 
 const FormData = [
     {
@@ -32,7 +35,7 @@ const FormData = [
     {
         name: "Image",
         field: "imageUrl",
-        type: 'text',
+        type: 'upload-image',
     },
     {
         name: "Price",
@@ -53,7 +56,7 @@ const FormData = [
 
 const productData = ref({
     name: '',
-    imageUrl: '',
+    imageUrl: '' || imgeUrl.value,
     price: 0,
     quantity: 0,
     about: '',
@@ -66,14 +69,39 @@ const AddOrEditProdcut = () => {
         router.push({ name: 'admin-products-list' })
         eventStore.popupMessage('success', 'Prodcut has been added')
     } else {
-        // console.log(productData);
         adminProductStore.updateProduct(productId, productData.value)
         router.push({ name: 'admin-products-list' })
         eventStore.popupMessage('success', 'Prodcut has been update')
     }
 }
 
-onMounted( async () => {
+const handleFileUpload = async (event) => {
+    const file = event.target.files[0];
+
+    let mainPath = ''
+
+    if (productId) {
+        mainPath = productId + '-'
+    }
+
+    if (file) {
+        //Set reference in Firebase
+        const uploadRef = storageRef(
+            storage,
+            `products/${mainPath}/${file.name}`
+        )
+
+        //Upload file
+        const snapShot = await uploadBytes(uploadRef, file)
+
+        //Get download file
+        const downloadUrl = await getDownloadURL(snapShot.ref)
+        imgeUrl.value = downloadUrl
+        console.log(imgeUrl.value);
+    }
+};
+
+onMounted(async () => {
     if (route.params.id) {
         mode.value = 'Edit'
         const selectedProduct = await adminProductStore.getProduct(productId)
@@ -93,8 +121,18 @@ onMounted( async () => {
                         <div class="label">
                             <span class="label-text">{{ formInput.name }}</span>
                         </div>
-                        <input :type="formInput.type" placeholder="Type here"
+
+                        <input v-if="formInput.type !== 'upload-image'" :type="formInput.type" placeholder="Type here"
                             v-model="productData[formInput.field]" class="input input-bordered w-full" />
+                        <div v-else>
+                            <div class="avatar">
+                                <div class="w-24 rounded-full">
+                                    <img :src="productData[formInput.field]" />
+                                </div>
+                            </div>
+                            <input type="file" class="inputFile border-2 border-neutral rounded-md"
+                                @change="handleFileUpload" />
+                        </div>
                     </label>
                 </div>
             </div>

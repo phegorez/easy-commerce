@@ -9,7 +9,8 @@ import {
 import {
     doc,
     getDoc,
-    setDoc
+    setDoc,
+    updateDoc
 } from 'firebase/firestore'
 
 import { auth, db } from '@/firebase'
@@ -32,31 +33,37 @@ export const useAccountStore = defineStore('account', {
                     // console.log('user', user);
                     if (user) {
                         this.user = user;
+
+                        // console.log('This user is', user.email);
+
                         const docRef = doc(db, 'user', user.uid);
                         const docSnap = await getDoc(docRef)
 
-                        if(docSnap.exists()){
+                        if (docSnap.exists()) {
                             // no add new
                             this.profile = docSnap.data()
                         } else {
                             // add new
                             const newUser = {
-                                name : user.displayName,
-                                role : 'member',
-                                status : 'active',
-                                updatedAt : new Date()
+                                name: user.displayName,
+                                role: 'member',
+                                status: 'active',
+                                updatedAt: new Date()
                             }
                             await setDoc(docRef, newUser)
                             this.profile = newUser
                         }
 
                         // check if user is admin and moderator for provide admin permissions
-                        if(this.profile.role === 'admin' || this.profile.role === 'moderator') {
+                        if (this.profile.role === 'admin' || this.profile.role === 'moderator') {
                             this.isAdmin = true;
                         }
 
                         // new memeber
                         this.isLoggedIn = true;
+
+                        this.profile.email = user.email
+
                         resolve(true)
                     } else {
                         // User is signed out
@@ -65,6 +72,19 @@ export const useAccountStore = defineStore('account', {
                     }
                 });
             })
+        },
+        async updateProfile(userData) {
+            try {
+                const updateUserData = {
+                    name: userData.name,
+                    imageUrl: userData.imageUrl
+                }
+
+                const userRef = doc(db, `user/${this.user.uid}`)
+                await updateDoc(userRef, updateUserData)
+            } catch (err) {
+                console.log('Error updating profile', err);
+            }
         },
         async signInWithGoogle() {
             try {
@@ -89,7 +109,7 @@ export const useAccountStore = defineStore('account', {
                         throw new Error('Your email address is invalid')
                     case 'auth/wrong-password':
                         throw new Error('Your password is incorrect')
-                    default: 
+                    default:
                         throw new Error('We have problems with your accout')
                 }
             }

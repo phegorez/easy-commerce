@@ -2,6 +2,8 @@
 import { initializeApp } from 'firebase/app';
 import { getFirestore, connectFirestoreEmulator  } from 'firebase/firestore';
 import { getAuth, connectAuthEmulator  } from "firebase/auth";
+import { getStorage, connectStorageEmulator  } from 'firebase/storage';
+
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -22,15 +24,18 @@ const app = initializeApp(firebaseConfig);
 // Initialize Cloud Firestore and get a reference to the service
 const db = getFirestore(app);
 const auth = getAuth(app);
+const storage = getStorage(app);
 
 connectFirestoreEmulator(db, '127.0.0.1', 8080);
 connectAuthEmulator(auth, "http://127.0.0.1:9099");
+connectStorageEmulator(storage, "127.0.0.1", 9199);
 
 export {
     db,
-    auth
+    auth,
+    storage
 }
 
 
 // cli for run emulators
-//  firebase emulators:start --import firebase-export-17073972194690Oh2kV --export-on-exit firebase-export-17073972194690Oh2kV
+//  firebase emulators:start --import firebase-export-1708189724296WfERyh --export-on-exit

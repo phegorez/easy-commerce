@@ -86,7 +86,7 @@ const handleSearch = (event) => {
           <div tabindex='0' role='button' class='btn btn-ghost btn-circle avatar'>
             <div class='w-10 rounded-full'>
               <img alt='Tailwind CSS Navbar component'
-                src='https://i1.sndcdn.com/artworks-000161913473-5mwrx1-t500x500.jpg' />
+                :src='accountStore.profile.imageUrl || "https://i1.sndcdn.com/artworks-000161913473-5mwrx1-t500x500.jpg"' />
             </div>
           </div>
           <ul tabindex='0' class='menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52'>

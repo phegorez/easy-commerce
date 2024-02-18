@@ -3,9 +3,10 @@ import { defineStore } from "pinia";
 import { db } from '@/firebase';
 
 import {
-  updateDoc,
   increment,
-  doc
+  doc,
+  getDoc,
+  writeBatch
 } from 'firebase/firestore'
 
 export const useCartStore = defineStore("cart", {
@@ -54,15 +55,29 @@ export const useCartStore = defineStore("cart", {
           product: this.items,
         };
 
+        const batch = writeBatch(db)
+        
         for (const product of orderData.product) {
           const productRef = doc(db, 'products', product.productId)
-          
-          await updateDoc(productRef, {
-            remainQuantity: increment(-1)
-          })
+
+          // Fetch the current remainQuantity from Firestore
+          const productDoc = await getDoc(productRef);
+          const currentQuantity = productDoc.data().remainQuantity;
+
+          // Throw an error if remainQuantity is already 0
+          if (currentQuantity === 0) {
+            throw new Error(`Product ID ${product.productId} is out of stock`);
+          }
+
+          if (currentQuantity > 0) {
+            batch.update(productRef, {
+              remainQuantity: increment(-1)
+            });
+          }
+
+          await batch.commit()
         }
-        // this.cartID = orderData.orderID;
-        // localStorage.setItem("order-data", JSON.stringify(orderData));
+        
       } catch (err) {
         console.log('error', err);
       }
