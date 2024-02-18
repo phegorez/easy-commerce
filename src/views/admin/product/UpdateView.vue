@@ -56,7 +56,7 @@ const FormData = [
 
 const productData = ref({
     name: '',
-    imageUrl: '' || imgeUrl.value,
+    imageUrl: '',
     price: 0,
     quantity: 0,
     about: '',
@@ -97,6 +97,7 @@ const handleFileUpload = async (event) => {
         //Get download file
         const downloadUrl = await getDownloadURL(snapShot.ref)
         imgeUrl.value = downloadUrl
+        productData.imageUrl = downloadUrl
         console.log(imgeUrl.value);
     }
 };
@@ -129,6 +130,9 @@ onMounted(async () => {
                                 <div class="w-24 rounded-full">
                                     <img :src="productData[formInput.field]" />
                                 </div>
+                                <!-- <div>
+                                    <img :src="imgeUrl">
+                                </div> -->
                             </div>
                             <input type="file" class="inputFile border-2 border-neutral rounded-md"
                                 @change="handleFileUpload" />
