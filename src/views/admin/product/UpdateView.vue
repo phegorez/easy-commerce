@@ -24,7 +24,6 @@ const route = useRoute();
 const productId = route.params.id
 const mode = ref("Add");
 const selectedProduct = ref({});
-const imgeUrl = ref('')
 
 const FormData = [
     {
@@ -54,7 +53,7 @@ const FormData = [
     },
 ];
 
-const productData = ref({
+const productData = reactive({
     name: '',
     imageUrl: '',
     price: 0,
@@ -65,11 +64,11 @@ const productData = ref({
 
 const AddOrEditProdcut = () => {
     if (mode.value === 'Add') {
-        adminProductStore.addProduct(productData.value)
+        adminProductStore.addProduct(productData)
         router.push({ name: 'admin-products-list' })
         eventStore.popupMessage('success', 'Prodcut has been added')
     } else {
-        adminProductStore.updateProduct(productId, productData.value)
+        adminProductStore.updateProduct(productId, productData)
         router.push({ name: 'admin-products-list' })
         eventStore.popupMessage('success', 'Prodcut has been update')
     }
@@ -96,9 +95,7 @@ const handleFileUpload = async (event) => {
 
         //Get download file
         const downloadUrl = await getDownloadURL(snapShot.ref)
-        imgeUrl.value = downloadUrl
         productData.imageUrl = downloadUrl
-        console.log(imgeUrl.value);
     }
 };
 
@@ -106,7 +103,7 @@ onMounted(async () => {
     if (route.params.id) {
         mode.value = 'Edit'
         const selectedProduct = await adminProductStore.getProduct(productId)
-        Object.assign(productData.value, selectedProduct)
+        Object.assign(productData, selectedProduct)
     }
 })
 </script>
