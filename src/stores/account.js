@@ -118,6 +118,6 @@ export const useAccountStore = defineStore('account', {
             this.isLoggedIn = false
             this.isAdmin = false
             await signOut(auth)
-        }
+        },
     }
 })

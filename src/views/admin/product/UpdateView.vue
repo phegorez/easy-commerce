@@ -7,6 +7,7 @@ import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage
 // Store
 import { useAdminProductStore } from "@/stores/admin/admin_product";
 import { useEventStore } from "@/stores/event";
+import { useAccountStore } from "@/stores/account";
 
 // Layout
 import AdminLayout from "@/layouts/AdminLayout.vue";
@@ -16,6 +17,7 @@ import { reactive, onMounted, ref } from "vue";
 
 const adminProductStore = useAdminProductStore();
 const eventStore = useEventStore();
+const accountStore = useAccountStore();
 
 const router = useRouter();
 const route = useRoute();
@@ -63,15 +65,20 @@ const productData = reactive({
 });
 
 const AddOrEditProdcut = () => {
-    if (mode.value === 'Add') {
-        adminProductStore.addProduct(productData)
-        router.push({ name: 'admin-products-list' })
-        eventStore.popupMessage('success', 'Prodcut has been added')
+    if (accountStore.profile.role === 'admin' || accountStore.profile.role === 'moderator') {
+        if (mode.value === 'Add') {
+            adminProductStore.addProduct(productData)
+            router.push({ name: 'admin-products-list' })
+            eventStore.popupMessage('success', 'Prodcut has been added')
+        } else {
+            adminProductStore.updateProduct(productId, productData)
+            router.push({ name: 'admin-products-list' })
+            eventStore.popupMessage('success', 'Prodcut has been update')
+        }
     } else {
-        adminProductStore.updateProduct(productId, productData)
-        router.push({ name: 'admin-products-list' })
-        eventStore.popupMessage('success', 'Prodcut has been update')
+        throw new Error (`You don't have permission to add or edit products this your current role is: ${accountStore.profile.role}`)
     }
+
 }
 
 const handleFileUpload = async (event) => {

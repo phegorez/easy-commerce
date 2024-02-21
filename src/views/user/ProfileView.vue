@@ -29,20 +29,31 @@ const name = ref("");
 const handleFileUpload = async (event) => {
   const file = event.target.files[0];
 
+
   if (file) {
+    const userId = accountStore.user.uid
+
     //Set reference in Firebase
     const uploadRef = storageRef(
       storage,
       `users/${accountStore.user.uid}/${file.name}`
     )
+    //Find path
+    const defaultPath = uploadRef._location.path
+    const imageFloder = defaultPath.split('/')[1]
 
-    //Upload file
-    const snapShot = await uploadBytes(uploadRef, file)
+    //compare userId and imageFloder
+    if (userId === imageFloder) {
+      //Upload file
+      const snapShot = await uploadBytes(uploadRef, file)
 
-    //Get download file
-    const downloadUrl = await getDownloadURL(snapShot.ref)
-    profileImageUrl.value = downloadUrl
-
+      //Get download file
+      const downloadUrl = await getDownloadURL(snapShot.ref)
+      profileImageUrl.value = downloadUrl
+    } else {
+      throw new Error(`You don't have permission to upload profile image`);
+    }
+    // console.log(imageFloder);
   }
 };
 
