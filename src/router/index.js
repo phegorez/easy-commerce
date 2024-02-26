@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useAccountStore } from '@/stores/account'
+import { useCartStore } from "@/stores/user/user_cart"; 
 // User
 import HomeView from "@/views/user/HomeView.vue";
 import SearchView from "@/views/user/SearchView.vue";
@@ -120,6 +121,10 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   const accountStore = useAccountStore()
   await accountStore.checkAuth()
+  
+  const cartStore = useCartStore()
+  await cartStore.loadCartFromStorage()
+  
   if (to.name.includes('admin') && !accountStore.isAdmin) {
     next({ name: 'home' })
   } else if (to.name === 'login' && accountStore.isAdmin) {

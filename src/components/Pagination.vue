@@ -16,6 +16,11 @@ defineProps({
     <div class="join">
         <button v-if="activePage - 1 > 0" class="join-item btn" @click="changePage(activePage - 1)"><AnglesLeft /></button>
         <button class="join-item btn">Page {{ activePage }} / {{ maxPage }}</button>
-        <button v-if="activePage + 1 <= maxPage" class="join-item btn" @click="changePage(activePage + 1)"><AnglesRight /></button>
+        <button v-if="activePage + 1 < maxPage" class="join-item btn" @click="changePage(activePage + 1)"><AnglesRight /></button>
     </div>
+    <!-- <div class="join">
+        <button v-if="activePage - 1 > 0" class="join-item btn" @click="changePage(activePage - 1)"><AnglesLeft /></button>
+        <button class="join-item btn">Page {{ activePage }} / {{ maxPage }}</button>
+        <button v-if="activePage + 1 <= maxPage" class="join-item btn" @click="changePage(activePage + 1)"><AnglesRight /></button>
+    </div> -->
 </template>

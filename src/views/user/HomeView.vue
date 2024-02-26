@@ -19,12 +19,12 @@ const eventStore = useEventStore();
 
 const router = useRouter()
 
-const addToCart = (product, isAddtoCart) => {
+const addToCart = async (product, isAddtoCart) => {
   if (isAddtoCart === 'fromAddTocart') {
-    cartStore.addToCart(product);
+    await cartStore.addToCart(product);
     eventStore.popupMessage('success', `Add ${product.name} to cart ${cartStore.summaryQuantity} items`)
   } else {
-    cartStore.addToCart(product);
+    await cartStore.addToCart(product);
     router.push({ name: 'cart' })
     eventStore.popupMessage('success', `Add ${product.name} to cart ${cartStore.summaryQuantity} items`)
   }

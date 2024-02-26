@@ -27,3 +27,6 @@ npm run dev
 ```sh
 npm run build
 ```
+
+run firebase emulator
+firebase emulators:start --import firebase-export-1708529582625NSJKOj --export-on-exit

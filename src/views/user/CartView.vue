@@ -8,13 +8,15 @@ import { useCartStore } from "@/stores/user/user_cart";
 import { RouterLink } from "vue-router";
 
 import { onMounted } from "vue";
+import LoginView from "../admin/LoginView.vue";
 
 const cartStore = useCartStore();
 
-const changeQuantity = (event, index) => {
+
+const changeQuantity = async (event, index) => {
   // covert string to int for passing updateQuantity function
   const newQuantity = parseInt(event.target.value);
-  cartStore.updateQuantity(index, newQuantity);
+  await cartStore.updateQuantity(index, newQuantity);
 };
 
 </script>
@@ -22,7 +24,7 @@ const changeQuantity = (event, index) => {
 <template>
   <UserLayout>
     <h1 class="text-3xl font-bold m-4">Shopping Cart</h1>
-
+    
     <div class="flex border-4 border-neutral my-2 rounded-md">
       <div class="flex-1 w-64 bg-base-200 p-4">
         <div v-if="cartStore.items.length === 0" class="h-full flex flex-col">
@@ -33,7 +35,7 @@ const changeQuantity = (event, index) => {
             <CartXmark />
           </div>
         </div>
-        <div v-else class="flex" v-for="(item, index) in cartStore.items">
+        <div class="flex" v-for="(item, index) in cartStore.items">
           <div class="flex-1">
             <img class="w-full p-4" :src="item.imageUrl" />
           </div>

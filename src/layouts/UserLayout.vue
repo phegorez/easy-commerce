@@ -4,9 +4,11 @@ import { RouterLink, useRouter } from 'vue-router';
 import { ref, onMounted } from 'vue';
 import { useCartStore } from '@/stores/user/user_cart';
 import { useAccountStore } from '@/stores/account'
+import { useEventStore } from '@/stores/event'
 
 const cartStore = useCartStore();
 const accountStore = useAccountStore()
+const eventStore = useEventStore()
 
 const router = useRouter();
 
@@ -14,6 +16,7 @@ const searchText = ref('');
 
 onMounted( async () => {
   await accountStore.checkAuth()
+  eventStore.loadBanner()
 })
 
 const login = async () => {
@@ -99,6 +102,12 @@ const handleSearch = (event) => {
       </div>
     </div>
     <!-- Main Content -->
+    <div v-if="eventStore.banner.display">
+      <a :href="eventStore.banner.link" target="_blank">
+        <img class="w-full" :src="eventStore.banner.imageUrl">
+      </a>
+      content data
+    </div>
     <slot></slot>
     <!-- Footer -->
     <footer class='footer p-10 bg-neutral text-neutral-content'>

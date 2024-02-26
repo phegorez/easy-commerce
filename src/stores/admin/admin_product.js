@@ -22,7 +22,6 @@ import {
 
 export const useAdminProductStore = defineStore("admin-product", {
     state: () => ({
-        list: [],
         docList: [],
         total: 0,
         filter: {
@@ -37,8 +36,11 @@ export const useAdminProductStore = defineStore("admin-product", {
     actions: {
         async loadProduct() {
             try {
-                //find collection
                 let productCol = query(
+                    collection(db, 'products')
+                )
+                //find collection
+                let countProductQuery = query(
                     collection(db, 'products'),
                     orderBy('updatedAt', this.filter.sort.updateAt) //desc
                 )
@@ -56,24 +58,20 @@ export const useAdminProductStore = defineStore("admin-product", {
 
                 //store productCol referenc in rawProductCol
                 const rawProductCol = productCol
-
                 //limit data to show 2 items
-                productCol = query(productCol, limit(2))
+                productCol = query(
+                    countProductQuery,
+                    limit(2)
+                )
 
-                //create snapshot
+                //set referent data
                 const productSnapshot = await getDocs(productCol)
+                this.docList = productSnapshot.docs || []
 
-                //set referenc data
-                this.docList = productSnapshot.docs
-
-                //use getCountFromServer for get amount of items in collection
+                // calculate total
                 const allSnapshot = await getCountFromServer(rawProductCol)
-
-                //for test
-                //console.log('Count', allSnapshot.data().count);
-
-                //set total state = amount of items in collection
                 this.total = allSnapshot.data().count
+
 
             } catch (err) {
                 console.log('error', err);

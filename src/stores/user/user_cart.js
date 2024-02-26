@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 
-import { db } from '@/firebase';
+import { db, realtimeDB } from '@/firebase';
 
 import {
   increment,
@@ -9,15 +9,20 @@ import {
   writeBatch
 } from 'firebase/firestore'
 
+import { ref, onValue, set } from "firebase/database"
+
+import { useAccountStore } from '@/stores/account'
+
 export const useCartStore = defineStore("cart", {
   state: () => ({
     items: [],
+    test: [{name: 'test1', age:'20'}, {name: 'test2', age:'30'}],
     shippingCost: 50,
     checkoutObj: {},
     cartID: "",
   }),
   actions: {
-    addToCart(productData) {
+    async addToCart(productData) {
       // find index if not found in items[] reuturn -1 if found item return current index
       const findProductIndex = this.items.findIndex((item) => {
         return item.name === productData.name;
@@ -27,22 +32,25 @@ export const useCartStore = defineStore("cart", {
         // if findProductIndex < 0 (if not found item in items[])
         productData.quantity = 1; // add quantity = 1
         this.items.push(productData); //push productData to items
-        // this.saveToStorage(); // invoke saveToStorage
+        this.saveToLocalStorage(); // invoke saveToStorage
       } else {
         // if found current item match with 0, 1, 2, ... not < 0
         const currentItem = this.items[findProductIndex]; //pick current item with findProductIndex
         this.updateQuantity(findProductIndex, currentItem.quantity + 1); //invoke updateQuantity
       }
+      await set(this.cartRef, this.items)
+
     },
-    updateQuantity(index, quantity) {
+    async updateQuantity(index, quantity) {
       this.items[index].quantity = quantity;
-      // this.saveToStorage();
+      this.saveToLocalStorage();
+      await set(this.cartRef, this.items)
     },
-    removeItemIncart(index) {
-      this.items[index].quantity = 1;
+    async removeItemIncart(index) {
+      // this.items[index].quantity = 1;
       this.items.splice(index, 1);
-      // this.saveToStorage();
-      console.log("Remove Success");
+      this.saveToLocalStorage();
+      await set(this.cartRef, this.items)
     },
     async checkout(userData) {
       try {
@@ -56,7 +64,7 @@ export const useCartStore = defineStore("cart", {
         };
 
         const batch = writeBatch(db)
-        
+
         for (const product of orderData.product) {
           const productRef = doc(db, 'products', product.productId)
 
@@ -77,7 +85,7 @@ export const useCartStore = defineStore("cart", {
 
           await batch.commit()
         }
-        
+
       } catch (err) {
         console.log('error', err);
       }
@@ -88,14 +96,31 @@ export const useCartStore = defineStore("cart", {
         this.checkoutObj = JSON.parse(orderData);
       }
     },
-    saveToStorage() {
-      localStorage.setItem("productData", JSON.stringify(this.items));
+    saveToLocalStorage() {
+      localStorage.setItem("cart-data", JSON.stringify(this.items));
     },
-    loadCartFromStorage() {
-      if (localStorage.getItem("productData")) {
-        const getItem = localStorage.getItem("productData");
-        const cartItems = JSON.parse(getItem);
-        this.items = cartItems;
+    loadFromLocalStorage() {
+      if(localStorage.getItem("cart-data")) {
+        const getItem = localStorage.getItem("cart-data");
+        const previousItem = JSON.parse(getItem)
+        this.items = previousItem
+      }
+    },
+    async loadCartFromStorage() {
+      // console.log('cart user', this.user);
+      if (this.user.uid) {
+        // console.log('login');
+        onValue(this.cartRef, (snapshot) => {
+          const data = snapshot.val()
+          if(data) {
+            this.items = data
+          }
+        }, (err) => {
+          console.log('error', err);
+        })
+      } else {
+        console.log('nope');
+        this.loadFromLocalStorage()
       }
     },
   },
@@ -113,5 +138,12 @@ export const useCartStore = defineStore("cart", {
     summaryTotalPrice() {
       return this.summaryPrice + this.shippingCost;
     },
+    user(state) {
+      const accountStore = useAccountStore()
+      return accountStore.user
+    },
+    cartRef(state) {
+      return ref(realtimeDB, `carts/${this.user.uid}`)
+    }
   },
 });

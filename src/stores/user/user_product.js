@@ -1,12 +1,12 @@
 import { defineStore } from 'pinia'
 
-import { collection, getDocs, query, where } from 'firebase/firestore'; 
+import { collection, getDocs, query, where, onSnapshot } from 'firebase/firestore';
 import { db } from '@/firebase';
 
 
 export const useProductStore = defineStore('product', {
   state: () => ({
-    list: []
+    list: [],
   }),
   actions: {
     filterProducts(searchText) {
@@ -14,17 +14,25 @@ export const useProductStore = defineStore('product', {
     },
     async loadProductsFromStorage() {
       const productCol = query(collection(db, 'products'), where('status', '==', 'open'))
-      const productSnapshot = await getDocs(productCol);
-      const products = productSnapshot.docs.map(doc =>{
-        const convertedData = doc.data()
-        convertedData.productId = doc.id
-        return convertedData
+      // const productSnapshot = await getDocs(productCol);
+      // const products = productSnapshot.docs.map(doc =>{
+      //   const convertedData = doc.data()
+      //   convertedData.productId = doc.id
+      //   return convertedData
+      // })
+      // if (products.length > 0) {
+      //     this.list = products
+      //     this.loaded = true
+      // }
+      onSnapshot(productCol, (snapshot) => {
+        const product = snapshot.docs.map(doc => {
+          const convertedData = doc.data()
+          convertedData.productId = doc.id
+          return convertedData
+        })
+        this.list = product
       })
-      if (products.length > 0) {
-          this.list = products
-          this.loaded = true
-      }
-  },
+    },
   }
 })
 
