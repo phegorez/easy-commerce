@@ -1,19 +1,44 @@
-/**
- * Import function triggers from their respective submodules:
- *
- * const {onCall} = require("firebase-functions/v2/https");
- * const {onDocumentWritten} = require("firebase-functions/v2/firestore");
- *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
- */
+const { onRequest } = require('firebase-functions/v2/https');
+const express = require('express');
+const app = express();
 
-const {onRequest} = require("firebase-functions/v2/https");
-const logger = require("firebase-functions/logger");
+const { db,auth } = require('./firebaseConfig.js')
 
-// Create and deploy your first functions
-// https://firebase.google.com/docs/functions/get-started
+app.post('/placeorder', async (req, res) => {
+    console.log(req.body);
 
-// exports.helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
+    const checkoutData = req.body.checkout
+
+    let checkoutProducts = []
+    let totalPrice = 0
+
+    const products = checkoutData.products
+
+    for(const product of products) {
+        const productRef = db.collection('products').doc(product.productId)
+        const productSnapshot = await productRef.get()
+        const productData = productSnapshot.data()
+        
+        let checkoutProduct = products
+        checkoutProduct.price = productData.price
+        checkoutProduct.totalPrice = productData.price * product.quantity
+        totalPrice += (productData.price * product.quantity)
+        checkoutProducts.push(checkoutProduct)
+    }
+
+    // console.log('checkoutProducts', checkoutProducts);
+    
+    res.json({
+        message: 'Hello from Firebase!',
+        checkoutProducts,
+        totalPrice
+    })
+})
+
+// app.post('/test', (req, res) => {
+//     res.json({
+//         message: 'This is Test'
+//     })
+// })
+
+exports.api = onRequest(app)

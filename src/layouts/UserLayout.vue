@@ -106,7 +106,6 @@ const handleSearch = (event) => {
       <a :href="eventStore.banner.link" target="_blank">
         <img class="w-full" :src="eventStore.banner.imageUrl">
       </a>
-      content data
     </div>
     <slot></slot>
     <!-- Footer -->
