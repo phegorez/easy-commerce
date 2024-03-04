@@ -67,7 +67,8 @@ app.post('/placeorder', async (req, res) => {
             // orderData,
             // products,
             // checkoutProducts,
-            redirectUrl: `localhost:5173/success?order_id=${successOrderId}`
+            redirectUrl: `http://localhost:5173/success?order_id=${successOrderId}`,
+            // orderId: successOrderId
         })
     } catch (err) {
         console.log('Failed to get checkout', err);

@@ -54,7 +54,7 @@ const router = createRouter({
       component: CheckoutView,
     },
     {
-      path: "/success/:cartid",
+      path: "/success",
       name: "success",
       component: SuccessView,
     },

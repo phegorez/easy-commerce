@@ -1,13 +1,7 @@
 import { defineStore } from "pinia";
+import axios from "axios";
 
 import { db, realtimeDB } from '@/firebase';
-
-import {
-  increment,
-  doc,
-  getDoc,
-  writeBatch
-} from 'firebase/firestore'
 
 import { ref, onValue, set } from "firebase/database"
 
@@ -16,7 +10,6 @@ import { useAccountStore } from '@/stores/account'
 export const useCartStore = defineStore("cart", {
   state: () => ({
     items: [],
-    test: [{name: 'test1', age:'20'}, {name: 'test2', age:'30'}],
     shippingCost: 50,
     checkoutObj: {},
     cartID: "",
@@ -56,35 +49,44 @@ export const useCartStore = defineStore("cart", {
       try {
         const orderData = {
           ...userData,
-          totalPrice: this.summaryPrice,
-          paymentMethod: "paypal",
-          orderDate: new Date().toLocaleString(),
-          orderID: `SS${Math.floor(Math.random() * 90000 + 10000)}`,
-          product: this.items,
+          products: this.items.map(product => ({
+            productId: product.productId,
+            quantity: product.quantity
+          }))
         };
 
-        const batch = writeBatch(db)
+        console.log('orderData', orderData);
 
-        for (const product of orderData.product) {
-          const productRef = doc(db, 'products', product.productId)
+        const response = await axios.post('/api/placeorder', {
+          source: 'test_src',
+          checkout: orderData
+        })
 
-          // Fetch the current remainQuantity from Firestore
-          const productDoc = await getDoc(productRef);
-          const currentQuantity = productDoc.data().remainQuantity;
+        console.log('response', response.data);
 
-          // Throw an error if remainQuantity is already 0
-          if (currentQuantity === 0) {
-            throw new Error(`Product ID ${product.productId} is out of stock`);
-          }
+        return response.data
+        // const batch = writeBatch(db)
 
-          if (currentQuantity > 0) {
-            batch.update(productRef, {
-              remainQuantity: increment(-1)
-            });
-          }
+        // for (const product of orderData.product) {
+        //   const productRef = doc(db, 'products', product.productId)
 
-          await batch.commit()
-        }
+        //   // Fetch the current remainQuantity from Firestore
+        //   const productDoc = await getDoc(productRef);
+        //   const currentQuantity = productDoc.data().remainQuantity;
+
+        //   // Throw an error if remainQuantity is already 0
+        //   if (currentQuantity === 0) {
+        //     throw new Error(`Product ID ${product.productId} is out of stock`);
+        //   }
+
+        //   if (currentQuantity > 0) {
+        //     batch.update(productRef, {
+        //       remainQuantity: increment(-1)
+        //     });
+        //   }
+
+        //   await batch.commit()
+        // }
 
       } catch (err) {
         console.log('error', err);

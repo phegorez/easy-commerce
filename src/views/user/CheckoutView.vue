@@ -42,8 +42,9 @@ const userFormData = reactive({
   note: "",
 });
 
-const payment = () => {
-  cartStore.checkout(userFormData);
+const payment = async () => {
+  const responesData = await cartStore.checkout(userFormData);
+  location.href = responesData.redirectUrl
   //   if (cartStore.cartID) {
   //     // Navigate to success route with cart ID parameter
   //     console.log(cartStore.cartID);

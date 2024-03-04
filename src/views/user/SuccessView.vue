@@ -1,7 +1,7 @@
 <script setup>
 import { useCartStore } from "@/stores/user/user_cart";
 
-import { RouterLink, useRouter } from "vue-router";
+import { RouterLink, useRouter, useRoute } from "vue-router";
 import { onMounted, ref } from "vue";
 
 import UserLayout from "@/layouts/UserLayout.vue";
@@ -10,6 +10,7 @@ const cartStore = useCartStore();
 
 const orderData = ref({});
 const router = useRouter();
+const route = useRoute();
 const isHaveProduct = ref(false);
 
 onMounted(() => {
@@ -20,6 +21,7 @@ onMounted(() => {
   if (cartStore.cartID) {
     isHaveProduct.value = true;
   } else {
+    console.log('notfound');
     isHaveProduct.value = false;
     router.push({ name: "notfound" });
   }
