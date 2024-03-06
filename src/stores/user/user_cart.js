@@ -1,6 +1,13 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 
+import {
+  doc,
+  getDoc,
+  collection,
+  getDocs
+} from 'firebase/firestore'
+
 import { db, realtimeDB } from '@/firebase';
 
 import { ref, onValue, set } from "firebase/database"
@@ -11,8 +18,7 @@ export const useCartStore = defineStore("cart", {
   state: () => ({
     items: [],
     shippingCost: 50,
-    checkoutObj: {},
-    cartID: "",
+    checkout: {},
   }),
   actions: {
     async addToCart(productData) {
@@ -47,23 +53,34 @@ export const useCartStore = defineStore("cart", {
     },
     async checkout(userData) {
       try {
-        const orderData = {
+        const checkoutData = {
           ...userData,
           products: this.items.map(product => ({
+            name: product.name,
+            imageUrl: product.imageUrl,
             productId: product.productId,
-            quantity: product.quantity
+            quantity: product.quantity,
+            price: product.price
           }))
         };
 
-        console.log('orderData', orderData);
+        // console.log('orderData', checkoutData);
+        // console.log('products', checkoutData.products);
 
         const response = await axios.post('/api/placeorder', {
-          source: 'test_src',
-          checkout: orderData
+          source: 'test_src', //add while make omise
+          checkout: checkoutData
         })
 
-        console.log('response', response.data);
+        // const mockup = {
+        //   ...checkoutData,
+        //   orderID: 1234,
+        //   paymentMethod: 'bitcoin'
+        // }
 
+
+        // console.log('response', response.data);
+        // this.saveCheckout(mockup)
         return response.data
         // const batch = writeBatch(db)
 
@@ -92,17 +109,26 @@ export const useCartStore = defineStore("cart", {
         console.log('error', err);
       }
     },
-    loadCheckout() {
-      const orderData = localStorage.getItem("order-data");
-      if (orderData) {
-        this.checkoutObj = JSON.parse(orderData);
+    async loadCheckout(orderId) {
+      try {
+        const orderRef = doc(db, 'orders', orderId)
+        const orderSnapshot = await getDoc(orderRef)
+        let orderData = orderSnapshot.data()
+        this.checkout = orderData
+        this.checkout.orderId = orderSnapshot.id
+        this.checkout.createdAt = orderData.createdAt.toDate().toLocaleString()
+      } catch (err) {
+        console.log('error:', err);
       }
+    },
+    saveCheckout(orderData) {
+      localStorage.setItem("order-data", JSON.stringify(orderData))
     },
     saveToLocalStorage() {
       localStorage.setItem("cart-data", JSON.stringify(this.items));
     },
     loadFromLocalStorage() {
-      if(localStorage.getItem("cart-data")) {
+      if (localStorage.getItem("cart-data")) {
         const getItem = localStorage.getItem("cart-data");
         const previousItem = JSON.parse(getItem)
         this.items = previousItem
@@ -114,7 +140,7 @@ export const useCartStore = defineStore("cart", {
         // console.log('login');
         onValue(this.cartRef, (snapshot) => {
           const data = snapshot.val()
-          if(data) {
+          if (data) {
             this.items = data
           }
         }, (err) => {

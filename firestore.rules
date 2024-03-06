@@ -18,6 +18,12 @@ service cloud.firestore {
       // Corrected condition: check both status and quantity for write access
     }
 
+    match /orders/{orderId} {
+      allow list: if isAdmin()
+      allow get: if(resource.data.status == 'successful' || isAdmin())
+      allow write: if false
+    }
+
     // No change needed for the catch-all match
     match /{document=**} {
       allow read, write: if true;

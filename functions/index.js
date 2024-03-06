@@ -6,7 +6,7 @@ const { db, auth } = require('./firebaseConfig.js');
 const { error } = require('firebase-functions/logger');
 
 app.post('/placeorder', async (req, res) => {
-    console.log('this is body',req.body);
+    console.log('this is body',req.body.checkout);
 
     try {
         const checkoutData = req.body.checkout
@@ -25,6 +25,8 @@ app.post('/placeorder', async (req, res) => {
                 const productData = productSnapshot.data()
 
                 let checkoutProduct = products
+                checkoutProduct.name = productData.name
+                checkoutProduct.imageUrl = productData.imageUrl
                 checkoutProduct.price = productData.price
                 checkoutProduct.totalPrice = productData.price * product.quantity
                 totalPrice += (productData.price * product.quantity)
@@ -57,7 +59,6 @@ app.post('/placeorder', async (req, res) => {
             }
 
             transaction.set(orderRef.doc(orderId), orderData)
-
             successOrderId = orderId
         })
 
@@ -66,7 +67,7 @@ app.post('/placeorder', async (req, res) => {
             // totalPrice,
             // orderData,
             // products,
-            // checkoutProducts,
+            checkoutProducts,
             redirectUrl: `http://localhost:5173/success?order_id=${successOrderId}`,
             // orderId: successOrderId
         })

@@ -45,19 +45,6 @@ const userFormData = reactive({
 const payment = async () => {
   const responesData = await cartStore.checkout(userFormData);
   location.href = responesData.redirectUrl
-  //   if (cartStore.cartID) {
-  //     // Navigate to success route with cart ID parameter
-  //     console.log(cartStore.cartID);
-  //   } else {
-  //     console.error("Cart ID is not available.");
-  //   }
-  // if (cartStore.cartID) {
-  //   router.push({
-  //     name: "success",
-  //     params: { cartid: cartStore.cartID },
-  //   });
-  //   eventStore.popupMessage('success', 'Your payment has been successfully');
-  // }
 };
 </script>
 

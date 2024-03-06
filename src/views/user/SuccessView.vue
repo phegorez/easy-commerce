@@ -8,32 +8,35 @@ import UserLayout from "@/layouts/UserLayout.vue";
 
 const cartStore = useCartStore();
 
-const orderData = ref({});
+const orderData = ref([]);
 const router = useRouter();
 const route = useRoute();
 const isHaveProduct = ref(false);
 
-onMounted(() => {
-  cartStore.loadCheckout();
-  if (cartStore.checkoutObj.orderID) {
-    orderData.value = cartStore.checkoutObj;
-  }
-  if (cartStore.cartID) {
-    isHaveProduct.value = true;
-  } else {
-    console.log('notfound');
-    isHaveProduct.value = false;
-    router.push({ name: "notfound" });
+onMounted(async () => {
+  const ORDERID = route.query.order_id
+  console.log('orderId', route.query.order_id);
+  try {
+    await cartStore.loadCheckout(ORDERID);
+    console.log(cartStore.checkout);
+    if (cartStore.checkout.orderId) {
+      console.log('found');
+      orderData.value = cartStore.checkout;
+      isHaveProduct.value = true;
+    } else {
+        console.log('not found');
+        isHaveProduct.value = false;
+        router.push({ name: "notfound" });
+    }
+  } catch (err) {
+    console.log('error:', err);
   }
 });
 </script>
 
 <template>
   <UserLayout>
-    <div
-      v-if="isHaveProduct"
-      class="border border-base-200 shadow-xl max-w-2xl mx-auto my-4 p-8"
-    >
+    <div v-if="isHaveProduct" class="border border-base-200 shadow-xl max-w-2xl mx-auto my-4 p-8">
       <div>
         <div class="text-2xl font-bold">
           Payment successful, Your order is purchased!
@@ -45,11 +48,11 @@ onMounted(() => {
       <div class="grid grid-cols-4">
         <div>
           <div class="font-bold">Order Date</div>
-          <div>{{ orderData.orderDate }}</div>
+          <div>{{ orderData.createdAt }}</div>
         </div>
         <div>
-          <div class="font-bold">Order Date</div>
-          <div>{{ orderData.orderID }}</div>
+          <div class="font-bold">Order ID</div>
+          <div>{{ orderData.orderId }}</div>
         </div>
         <div>
           <div class="font-bold">Payment Method</div>
@@ -61,10 +64,7 @@ onMounted(() => {
         </div>
       </div>
       <div class="divider" />
-      <div
-        v-for="product in orderData.product"
-        class="grid grid-cols-4 mb-4 p-2 items-center bg-base-300"
-      >
+      <div v-for="product in orderData.products" class="grid grid-cols-4 mb-4 p-2 items-center bg-base-300">
         <div>
           <img :src="product.imageUrl" class="w-4/5" />
         </div>
