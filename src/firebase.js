@@ -49,4 +49,4 @@ export {
 
 
 // cli for run emulators
-//  firebase emulators:start --import firebase-export-1709563851982V8cmRI --export-on-exit
+//  firebase emulators:start --import firebase-export-17097351201186utIqk --export-on-exit

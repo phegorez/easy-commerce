@@ -14,11 +14,29 @@ import { ref, onValue, set } from "firebase/database"
 
 import { useAccountStore } from '@/stores/account'
 
+Omise.setPublicKey(import.meta.env.VITE_OMISE_PUBLIC_KEY)
+
+const createSource = (amount) => {
+  return new Promise((resolve, reject) => {
+    // send source to omise for take source token back to front-end
+    Omise.createSource('rabbit_linepay', {
+      amount: (amount * 100),
+      currency: 'THB'
+    }, (statusCode, response) => {
+      if (statusCode !== 200) {
+        return reject(response)
+      }
+      resolve(response);
+    })
+  })
+}
+
 export const useCartStore = defineStore("cart", {
   state: () => ({
     items: [],
     shippingCost: 50,
     checkout: {},
+    // url: ''
   }),
   actions: {
     async addToCart(productData) {
@@ -64,47 +82,22 @@ export const useCartStore = defineStore("cart", {
           }))
         };
 
+        const omiseResponse = await createSource(this.summaryTotalPrice)
+
+        console.log('orderData', omiseResponse);
+
         // console.log('orderData', checkoutData);
         // console.log('products', checkoutData.products);
-
+        // 
         const response = await axios.post('/api/placeorder', {
-          source: 'test_src', //add while make omise
+          source: omiseResponse.id, //omise source token
           checkout: checkoutData
         })
 
-        // const mockup = {
-        //   ...checkoutData,
-        //   orderID: 1234,
-        //   paymentMethod: 'bitcoin'
-        // }
-
-
-        // console.log('response', response.data);
-        // this.saveCheckout(mockup)
         return response.data
-        // const batch = writeBatch(db)
-
-        // for (const product of orderData.product) {
-        //   const productRef = doc(db, 'products', product.productId)
-
-        //   // Fetch the current remainQuantity from Firestore
-        //   const productDoc = await getDoc(productRef);
-        //   const currentQuantity = productDoc.data().remainQuantity;
-
-        //   // Throw an error if remainQuantity is already 0
-        //   if (currentQuantity === 0) {
-        //     throw new Error(`Product ID ${product.productId} is out of stock`);
-        //   }
-
-        //   if (currentQuantity > 0) {
-        //     batch.update(productRef, {
-        //       remainQuantity: increment(-1)
-        //     });
-        //   }
-
-        //   await batch.commit()
-        // }
-
+        // this.url = response.data.redirectUrl
+        // console.log(response.data.redirectUrl);
+        
       } catch (err) {
         console.log('error', err);
       }

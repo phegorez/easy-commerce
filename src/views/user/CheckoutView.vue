@@ -10,11 +10,12 @@ import UserLayout from "@/layouts/UserLayout.vue";
 import { RouterLink, useRouter } from "vue-router";
 
 // Vue command
-import { reactive } from "vue";
+import { onMounted, reactive } from "vue";
 
 const cartStore = useCartStore();
 const router = useRouter();
 const eventStore = useEventStore()
+
 
 const FormData = [
   {
@@ -45,7 +46,10 @@ const userFormData = reactive({
 const payment = async () => {
   const responesData = await cartStore.checkout(userFormData);
   location.href = responesData.redirectUrl
+  // console.log(responesData.redirectUrl);
+
 };
+
 </script>
 
 <template>
