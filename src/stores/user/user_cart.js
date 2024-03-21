@@ -82,9 +82,10 @@ export const useCartStore = defineStore("cart", {
           }))
         };
 
-        const omiseResponse = await createSource(this.summaryTotalPrice)
+        const omiseResponse = await createSource(this.summaryPrice)
 
         console.log('orderData', omiseResponse);
+        // console.log('source ID', omiseResponse.id);
 
         // console.log('orderData', checkoutData);
         // console.log('products', checkoutData.products);
@@ -97,7 +98,7 @@ export const useCartStore = defineStore("cart", {
         return response.data
         // this.url = response.data.redirectUrl
         // console.log(response.data.redirectUrl);
-        
+
       } catch (err) {
         console.log('error', err);
       }

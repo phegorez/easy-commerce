@@ -29,8 +29,27 @@ const createCharge = (source, amount, orderId) => {
     })
 }
 
+// const createCharge = async (amount, orderId) => {
+//     try {
+//         const source = await createSource(amount); // Wait for source creation
+//         const response = await omise.charges.create({
+//             amount: (amount * 100),
+//             currency: 'THB',
+//             return_uri: `http://localhost:5173/success?order_id=${orderId}`,
+//             metadata: {
+//                 orderId
+//             },
+//             source: source.id, // Use source.id after creation
+//         });
+//         return resolve(response);
+//     } catch (err) {
+//         return reject(err);
+//     }
+// }
+
 app.post('/placeorder', async (req, res) => {
-    console.log('this is body', req.body.checkout);
+    console.log('this is body', req.body);
+    // console.log('sourceOmise', req.body.source);
 
     try {
         const checkoutData = req.body.checkout
@@ -40,7 +59,7 @@ app.post('/placeorder', async (req, res) => {
         let orderData = {}
         let omiseResponse = {}
         let successOrderId = ''
-        
+        console.log('sourceOmise', sourceOmise);
         const products = checkoutData.products
 
         await db.runTransaction(async (transaction) => {
@@ -74,7 +93,7 @@ app.post('/placeorder', async (req, res) => {
 
             orderData = {
                 ...checkoutData,
-                chargeId: `charge ${orderId}`,
+                chargeId: `${orderId}`,
                 // chargeId: `charge test`,
                 products: checkoutProducts,
                 totalPrice,
@@ -84,8 +103,9 @@ app.post('/placeorder', async (req, res) => {
             }
 
             transaction.set(orderRef.doc(orderId), orderData)
-            
+
             omiseResponse = await createCharge(sourceOmise, totalPrice, orderId)
+
             successOrderId = orderId
         })
 
